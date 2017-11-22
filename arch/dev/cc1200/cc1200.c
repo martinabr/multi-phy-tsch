@@ -48,7 +48,7 @@
 #include <stdio.h>
 
 #include "net/mac/tsch/tsch-asn.h"
-static struct asn_divisor_t tsch_hopping_sequence_divisor;
+static struct tsch_asn_divisor_t tsch_hopping_sequence_divisor;
 
 static int16_t rssi;
 static rtimer_clock_t sfd_timestamp = 0;
@@ -1479,10 +1479,10 @@ get_object(radio_param_t param, void *dest, size_t size)
   }
 
   if(param == RADIO_CONST_TSCH_HOPPING_SEQUENCE_DIVISOR) {
-    if(size != sizeof(struct asn_divisor_t) || !dest) {
+    if(size != sizeof(struct tsch_asn_divisor_t) || !dest) {
       return RADIO_RESULT_INVALID_VALUE;
     }
-    *(struct asn_divisor_t*)dest = tsch_hopping_sequence_divisor;
+    *(struct tsch_asn_divisor_t*)dest = tsch_hopping_sequence_divisor;
     return RADIO_RESULT_OK;
   }
 

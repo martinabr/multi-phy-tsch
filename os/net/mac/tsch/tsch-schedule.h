@@ -124,7 +124,7 @@ struct tsch_slotframe {
   /* Unique identifier */
   uint16_t handle;
   /* Number of timeslots in the slotframe.
-   * Stored as struct asn_divisor_t because we often need ASN%size */
+   * Stored as struct tsch_asn_divisor_t because we often need ASN%size */
   struct tsch_asn_divisor_t size;
   /* The radio this slotframe is attached to */
   const struct radio_driver *radio;

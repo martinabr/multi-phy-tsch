@@ -252,10 +252,10 @@ tsch_release_lock(void)
 uint8_t
 tsch_calculate_channel(struct tsch_asn_t *asn, uint8_t channel_offset)
 {
-  struct asn_divisor_t radio_divisor;
+  struct tsch_asn_divisor_t radio_divisor;
   uint16_t index_of_0;
   uint16_t index_of_offset;
-  if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_HOPPING_SEQUENCE_DIVISOR, &radio_divisor, sizeof(struct asn_divisor_t *)) == RADIO_RESULT_OK) {
+  if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_HOPPING_SEQUENCE_DIVISOR, &radio_divisor, sizeof(struct tsch_asn_divisor_t *)) == RADIO_RESULT_OK) {
     index_of_0 = TSCH_ASN_MOD(*asn, radio_divisor);
     index_of_offset = (index_of_0 + channel_offset) % radio_divisor.val;
   } else {

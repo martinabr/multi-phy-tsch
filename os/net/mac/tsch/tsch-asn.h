@@ -86,14 +86,14 @@ struct tsch_asn_divisor_t {
 #define TSCH_ASN_DIFF(asn1, asn2) \
   ((asn1).ls4b - (asn2).ls4b)
 
-/* Initialize a struct asn_divisor_t */
+/* Initialize a struct tsch_asn_divisor_t */
 #define TSCH_ASN_DIVISOR_INIT(div, val_) do { \
     (div).val = (val_); \
     (div).asn_ms1b_remainder = ((0xffffffff % (val_)) + 1) % (val_); \
 } while(0);
 
 /* Returns the result (16 bits) of a modulo operation on ASN,
- * with divisor being a struct asn_divisor_t */
+ * with divisor being a struct tsch_asn_divisor_t */
 #define TSCH_ASN_MOD(asn, div) \
   ((uint16_t)((asn).ls4b % (div).val) \
    + (uint16_t)((asn).ms1b * (div).asn_ms1b_remainder % (div).val)) \
