@@ -58,6 +58,7 @@
 #include "net/mac/framer/frame802154.h"
 #include "sys/process.h"
 #include "sys/rtimer.h"
+#include "deployment.h"
 #include <string.h>
 
 /* Log configuration */
@@ -90,6 +91,8 @@ tsch_schedule_add_slotframe(uint16_t handle, uint16_t size)
     if(sf != NULL) {
       /* Initialize the slotframe */
       sf->handle = handle;
+      sf->radio = NULL;
+      sf->tsch_timing = NULL;
       TSCH_ASN_DIVISOR_INIT(sf->size, size);
       LIST_STRUCT_INIT(sf, links_list);
       /* Add the slotframe to the global list */

@@ -113,8 +113,8 @@ tsch_log_process_pending(void)
         log_lladdr_compact(&log->rx.src);
         printf("->");
         log_lladdr_compact(log->rx.is_unicast ? &linkaddr_node_addr : NULL);
-        printf(", len %u, seq %u",
-                log->rx.datalen, log->rx.seqno);
+        printf(", len %u, seq %u rssi %d",
+                log->rx.datalen, log->rx.seqno, log->rx.rssi);
         if(log->rx.drift_used) {
           printf(", dr %d", log->rx.drift);
         }

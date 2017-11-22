@@ -62,6 +62,9 @@
 #include "net/mac/tsch/tsch-security.h"
 #include "net/mac/mac-sequence.h"
 #include "lib/random.h"
+#include "dev/multiradio.h"
+#include "dev/watchdog.h"
+#include "deployment.h"
 
 #if UIP_CONF_IPV6_RPL
 #include "net/mac/tsch/tsch-rpl.h"
@@ -126,7 +129,8 @@ static const uint16_t tsch_default_timing_us[tsch_ts_elements_count] = {
   TSCH_DEFAULT_TS_TIMESLOT_LENGTH,
 };
 /* TSCH timeslot timing (in rtimer ticks) */
-rtimer_clock_t tsch_timing[tsch_ts_elements_count];
+rtimer_clock_t tsch_default_timing[tsch_ts_elements_count];
+rtimer_clock_t *tsch_timing = tsch_default_timing;
 
 #if LINKADDR_SIZE == 8
 /* 802.15.4 broadcast MAC address  */
@@ -238,8 +242,15 @@ tsch_reset(void)
   TSCH_ASN_INIT(tsch_current_asn, 0, 0);
   current_link = NULL;
   /* Reset timeslot timing to defaults */
-  for(i = 0; i < tsch_ts_elements_count; i++) {
-    tsch_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+  multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+  if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
+    for(i = 0; i < tsch_ts_elements_count; i++) {
+      tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+    }
+  } else {
+    for(i = 0; i < tsch_ts_elements_count; i++) {
+      tsch_default_timing[i] = tsch_timing[i];
+    }
   }
 #ifdef TSCH_CALLBACK_LEAVING_NETWORK
   TSCH_CALLBACK_LEAVING_NETWORK();
@@ -379,8 +390,9 @@ eb_input(struct input_packet *current_input)
       while(stat != NULL) {
         /* Is neighbor eligible as a time source? */
         if(stat->rx_count > best_neighbor_eb_count / 2) {
-          if(best_stat == NULL ||
-             stat->jp < best_stat->jp) {
+          if((stat->jp + 1) < TSCH_MAX_JOIN_PRIORITY &&
+             (best_stat == NULL ||
+             stat->jp < best_stat->jp)) {
             best_stat = stat;
           }
         }
@@ -572,9 +584,14 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   /* TSCH timeslot timing */
   for(i = 0; i < tsch_ts_elements_count; i++) {
     if(ies.ie_tsch_timeslot_id == 0) {
-      tsch_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+      multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+      if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
+        tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+      } else {
+        tsch_default_timing[i] = tsch_timing[i];
+      }
     } else {
-      tsch_timing[i] = US_TO_RTIMERTICKS(ies.ie_tsch_timeslot[i]);
+      tsch_default_timing[i] = US_TO_RTIMERTICKS(ies.ie_tsch_timeslot[i]);
     }
   }
 
@@ -636,7 +653,7 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   }
 #endif /* TSCH_INIT_SCHEDULE_FROM_EB */
 
-  if(tsch_join_priority < TSCH_MAX_JOIN_PRIORITY) {
+  if(tsch_join_priority <= TSCH_MAX_JOIN_PRIORITY) {
     struct tsch_neighbor *n;
 
     /* Add coordinator to list of neighbors, lock the entry */
@@ -707,15 +724,22 @@ PT_THREAD(tsch_scan(struct pt *pt))
 
   while(!tsch_is_associated && !tsch_is_coordinator) {
     /* Hop to any channel offset */
-    static uint8_t current_channel = 0;
+    static int current_channel = -1;
 
     /* We are not coordinator, try to associate */
     rtimer_clock_t t0;
     int is_packet_pending = 0;
     clock_time_t now_time = clock_time();
 
+#if WITH_MULTIRADIO
+    multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+#endif
+    if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
+      tsch_timing = tsch_default_timing;
+    }
+
     /* Switch to a (new) channel for scanning */
-    if(current_channel == 0 || now_time - current_channel_since > TSCH_CHANNEL_SCAN_DURATION) {
+    if(current_channel == -1 || now_time - current_channel_since > TSCH_CHANNEL_SCAN_DURATION) {
       /* Pick a channel at random in TSCH_JOIN_HOPPING_SEQUENCE */
       uint8_t scan_channel = TSCH_JOIN_HOPPING_SEQUENCE[
           random_rand() % sizeof(TSCH_JOIN_HOPPING_SEQUENCE)];
@@ -883,6 +907,15 @@ tsch_init(void)
   radio_value_t radio_tx_mode;
   rtimer_clock_t t;
 
+#if WITH_MULTIRADIO
+  static const struct radio_driver * const radios[] = MULTIRADIO_DRIVERS;
+  static const int num_radios = sizeof(radios) / sizeof(struct radio_driver *);
+  int i;
+
+  for(i=0; i<num_radios; i++) {
+    multiradio_select(radios[i]);
+#endif
+
   /* Radio Rx mode */
   if(NETSTACK_RADIO.get_value(RADIO_PARAM_RX_MODE, &radio_rx_mode) != RADIO_RESULT_OK) {
     LOG_ERR("! radio does not support getting RADIO_PARAM_RX_MODE. Abort init.\n");
@@ -920,6 +953,11 @@ tsch_init(void)
     LOG_ERR("! radio does not support getting last packet timestamp. Abort init.\n");
     return;
   }
+
+#if WITH_MULTIRADIO
+  }
+#endif
+
   /* Check max hopping sequence length vs default sequence length */
   if(TSCH_HOPPING_SEQUENCE_MAX_LEN < sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE)) {
     LOG_ERR("! TSCH_HOPPING_SEQUENCE_MAX_LEN < sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE). Abort init.\n");
@@ -1089,7 +1127,13 @@ turn_on(void)
     /* Process tx/rx callback and log messages whenever polled */
     process_start(&tsch_pending_events_process, NULL);
     /* periodically send TSCH EBs */
+#if WITH_SINGLE_SENDER
+    if(tsch_is_coordinator) {
+      process_start(&tsch_send_eb_process, NULL);
+    }
+#else
     process_start(&tsch_send_eb_process, NULL);
+#endif
     /* try to associate to a network or start one if setup as coordinator */
     process_start(&tsch_process, NULL);
     LOG_INFO("starting as %s\n", tsch_is_coordinator ? "coordinator": "node");

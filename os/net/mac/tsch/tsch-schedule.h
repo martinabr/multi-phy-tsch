@@ -84,6 +84,7 @@
 #define LINK_OPTION_RX              2
 #define LINK_OPTION_SHARED          4
 #define LINK_OPTION_TIME_KEEPING    8
+#define LINK_OPTION_SAMPLE_RSSI    16
 
 /************ Types ***********/
 
@@ -125,6 +126,10 @@ struct tsch_slotframe {
   /* Number of timeslots in the slotframe.
    * Stored as struct asn_divisor_t because we often need ASN%size */
   struct tsch_asn_divisor_t size;
+  /* The radio this slotframe is attached to */
+  const struct radio_driver *radio;
+  /* The timeslot timing for slots in this slotframe */
+  rtimer_clock_t *tsch_timing;
   /* List of links belonging to this slotframe */
   LIST_STRUCT(links_list);
 };

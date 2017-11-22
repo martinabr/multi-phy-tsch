@@ -55,7 +55,7 @@ frequency hopping for enhanced reliability.
 #define TSCH_KEEPALIVE_TIMEOUT TSCH_CONF_KEEPALIVE_TIMEOUT
 #else
 /* Time to desynch assuming a drift of 40 PPM (80 PPM between two nodes) and guard time of +/-1ms: 12.5s. */
-#define TSCH_KEEPALIVE_TIMEOUT (12 * CLOCK_SECOND)
+#define TSCH_KEEPALIVE_TIMEOUT (2 * CLOCK_SECOND)
 #endif
 
 /* With TSCH_ADAPTIVE_TIMESYNC enabled: keep-alive timeout used after reaching

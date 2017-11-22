@@ -80,7 +80,7 @@
 #ifdef TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR
 #define TSCH_PACKET_EACK_WITH_DEST_ADDR TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR
 #else
-#define TSCH_PACKET_EACK_WITH_DEST_ADDR 1 /* Include destination address
+#define TSCH_PACKET_EACK_WITH_DEST_ADDR 0 /* Include destination address
 by default, useful in case of duplicate seqno */
 #endif
 
