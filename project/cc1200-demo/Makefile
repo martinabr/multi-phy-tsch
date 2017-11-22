@@ -5,10 +5,11 @@ all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly
-APPS = deployment
+MODULES += os/services/deployment
 
+CHANNEL ?= 0
 CFLAGS += -DCUSTOM_CHANNEL=$(CHANNEL)
 
-CONTIKI = ../../..
-CONTIKI_WITH_RIME = 1
+CONTIKI = ../..
+MAKE_NET = MAKE_NET_NULLNET
 include $(CONTIKI)/Makefile.include

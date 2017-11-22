@@ -44,47 +44,51 @@
 #include "contiki.h"
 #include "cpu.h"
 #include "sys/etimer.h"
-#include "dev/leds.h"
 #include "dev/watchdog.h"
 #include "dev/serial-line.h"
 #include "dev/sys-ctrl.h"
-#include "net/rime/broadcast.h"
+#include "net/nullnet/nullnet.h"
 #include "net/netstack.h"
-#include "apps/deployment/deployment.h"
+#include "net/packetbuf.h"
+#include "deployment/deployment.h"
 
 #include <stdio.h>
 #include <stdint.h>
-/*---------------------------------------------------------------------------*/
+
+/* Log configuration */
+#include "sys/log.h"
+#define LOG_MODULE "App"
+#define LOG_LEVEL LOG_LEVEL_INFO
+
 #define LOOP_PERIOD         1
 #define LOOP_INTERVAL       ((CLOCK_SECOND * LOOP_PERIOD) / 4)
-#define BROADCAST_CHANNEL   129
+
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
-static uint32_t counter;
 /*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+void
+input_callback(const void *data, uint16_t len,
+  const linkaddr_t *src, const linkaddr_t *dest)
 {
-  printf("App: received from %u seq %u rssi %d\n",
-         node_id_from_linkaddr(from),
-         (unsigned)*(uint32_t *)packetbuf_dataptr(),
-         (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
-        );
-  leds_toggle(LEDS_GREEN);
+  LOG_INFO("Received seq %u from ", *(unsigned *)data);
+  LOG_INFO_LLADDR(src);
+  LOG_INFO_(" rssi %u\n",
+    (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
+  );
 }
-/*---------------------------------------------------------------------------*/
-static const struct broadcast_callbacks bc_rx = { broadcast_recv };
-static struct broadcast_conn bc;
 /*---------------------------------------------------------------------------*/
 PROCESS(cc1200_demo_process, "cc1200 demo process");
 AUTOSTART_PROCESSES(&cc1200_demo_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
-  PROCESS_EXITHANDLER(broadcast_close(&bc))
+  static uint32_t count = 0;
   PROCESS_BEGIN();
 
-  broadcast_open(&bc, BROADCAST_CHANNEL, &bc_rx);
+  /* Initialize NullNet */
+  nullnet_buf = (uint8_t *)&count;
+  nullnet_len = sizeof(count);
+  nullnet_set_input_callback(input_callback);
 
   etimer_set(&et, LOOP_INTERVAL);
 
@@ -93,8 +97,6 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   NETSTACK_RADIO.get_value(RADIO_PARAM_TX_MODE, &radio_tx_mode);
   radio_tx_mode &= ~RADIO_TX_MODE_SEND_ON_CCA;
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
-#undef CUSTOM_CHANNEL
-#define CUSTOM_CHANNEL 0
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
   node_id = get_node_id();
@@ -104,12 +106,9 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
     PROCESS_YIELD();
     if(ev == PROCESS_EVENT_TIMER) {
       if(node_id == 1) {
-        printf("App: sending seq %u\n", (unsigned)counter);
-        leds_toggle(LEDS_RED);
-        packetbuf_copyfrom(&counter, sizeof(counter));
-        broadcast_send(&bc);
-        //NETSTACK_RADIO.send(&counter, 4);
-        counter++;
+        LOG_INFO("Sending seq %u\n", (unsigned)count);
+        NETSTACK_NETWORK.output(NULL);
+        count++;
       }
       etimer_set(&et, LOOP_INTERVAL);
     }
@@ -121,4 +120,3 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 /**
  * @}
  */
-
