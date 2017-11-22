@@ -75,13 +75,33 @@ typedef uint32_t uip_stats_t;
  */
 typedef uint32_t rtimer_clock_t;
 #define RTIMER_CLOCK_DIFF(a, b)     ((int32_t)((a) - (b)))
+
+unsigned radio_phy_overhead(void);
+unsigned radio_byte_air_time(void);
+unsigned radio_delay_before_tx(void);
+unsigned radio_delay_before_rx(void);
+unsigned radio_delay_before_detect(void);
+
 /** @} */
 /*---------------------------------------------------------------------------*/
 /* 352us from calling transmit() until the SFD byte has been sent */
-#define RADIO_DELAY_BEFORE_TX     ((unsigned)US_TO_RTIMERTICKS(352))
+#define CC2538_DELAY_BEFORE_TX     ((unsigned)US_TO_RTIMERTICKS(352))
 /* 192us as in datasheet but ACKs are not always received, so adjusted to 250us */
-#define RADIO_DELAY_BEFORE_RX     ((unsigned)US_TO_RTIMERTICKS(250))
-#define RADIO_DELAY_BEFORE_DETECT 0
+#define CC2538_DELAY_BEFORE_RX     ((unsigned)US_TO_RTIMERTICKS(250))
+#define CC2538_DELAY_BEFORE_DETECT (0)
+
+/* On cc1200 with 50 kbps config. Includes 3 Bytes preamble + 2 Bytes SFD, at 160usec per byte = 800 usec*/
+/* CC1200_DELAY_BEFORE_TX is defined in cc1200_rf_cfg_t */
+/* Roughly measured in S/W... needs real validation */
+#define CC1200_DELAY_BEFORE_RX     ((unsigned)US_TO_RTIMERTICKS(400))
+#define CC1200_DELAY_BEFORE_DETECT (0)
+
+#define RADIO_PHY_OVERHEAD        radio_phy_overhead()
+#define RADIO_BYTE_AIR_TIME       radio_byte_air_time()
+#define RADIO_DELAY_BEFORE_TX     radio_delay_before_tx()
+#define RADIO_DELAY_BEFORE_RX     radio_delay_before_rx()
+#define RADIO_DELAY_BEFORE_DETECT radio_delay_before_detect()
+
 #ifndef TSCH_CONF_BASE_DRIFT_PPM
 /* The drift compared to "true" 10ms slots.
  * Enable adaptive sync to enable compensation for this.
@@ -98,6 +118,7 @@ typedef uint32_t rtimer_clock_t;
 #if MAC_CONF_WITH_TSCH
 #define TSCH_CONF_HW_FRAME_FILTERING  0
 #endif /* MAC_CONF_WITH_TSCH */
+
 /*---------------------------------------------------------------------------*/
 /**
  * \name Serial Boot Loader Backdoor configuration
