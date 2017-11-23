@@ -56,8 +56,7 @@
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-#define LOOP_PERIOD         1
-#define LOOP_INTERVAL       ((CLOCK_SECOND * LOOP_PERIOD) / 4)
+#define LOOP_INTERVAL       (CLOCK_SECOND)
 
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
@@ -68,7 +67,7 @@ input_callback(const void *data, uint16_t len,
 {
   LOG_INFO("Received seq %u from ", *(unsigned *)data);
   LOG_INFO_LLADDR(src);
-  LOG_INFO_(" rssi %u\n",
+  LOG_INFO_(" rssi %d\n",
     (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
   );
 }
@@ -96,12 +95,9 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
-  node_id = get_node_id();
-
   while(1) {
     PROCESS_YIELD();
     if(ev == PROCESS_EVENT_TIMER) {
-      LOG_INFO("Hello %u\n", node_id);
       if(node_id == 1) {
         LOG_INFO("Sending seq %u\n", (unsigned)count);
         NETSTACK_NETWORK.output(NULL);

@@ -46,6 +46,7 @@
 #include "sys/energest.h"
 #include "dev/watchdog.h"
 
+#include "services/deployment/deployment.h"
 #include "services/orchestra/orchestra.h"
 #include "services/shell/serial-shell.h"
 
