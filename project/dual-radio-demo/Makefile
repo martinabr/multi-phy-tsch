@@ -1,11 +1,9 @@
-DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
-CONTIKI_PROJECT = dual-radio-demo
-
-all: $(CONTIKI_PROJECT)
+all: dual-radio-demo
 
 TARGET ?= zoul
 BOARD ?= firefly
+MODULES += os/services/deployment
 
-CONTIKI = ../../..
-CONTIKI_WITH_RIME = 1
+CONTIKI = ../..
+MAKE_NET = MAKE_NET_NULLNET
 include $(CONTIKI)/Makefile.include

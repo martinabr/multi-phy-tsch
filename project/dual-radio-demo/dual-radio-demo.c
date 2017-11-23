@@ -42,81 +42,83 @@
  */
 /*---------------------------------------------------------------------------*/
 #include "contiki.h"
-#include "cpu.h"
 #include "sys/etimer.h"
-#include "dev/leds.h"
-#include "dev/watchdog.h"
-#include "dev/serial-line.h"
-#include "dev/sys-ctrl.h"
-#include "dev/multiradio.h"
-#include "net/rime/broadcast.h"
+#include "net/nullnet/nullnet.h"
 #include "net/netstack.h"
+#include "net/packetbuf.h"
+#include "deployment/deployment.h"
+#include "dev/multiradio.h"
 
 #include <stdio.h>
 #include <stdint.h>
-/*---------------------------------------------------------------------------*/
-#define LOOP_PERIOD         2
-#define LOOP_INTERVAL       (CLOCK_SECOND * LOOP_PERIOD)
-#define BROADCAST_CHANNEL   129
+
+/* Log configuration */
+#include "sys/log.h"
+#define LOG_MODULE "App"
+#define LOG_LEVEL LOG_LEVEL_INFO
+
+#define LOOP_INTERVAL       (CLOCK_SECOND)
+
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
-static uint32_t counter;
 /*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
-/*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+void
+input_callback(const void *data, uint16_t len,
+  const linkaddr_t *src, const linkaddr_t *dest)
 {
-  printf("broadcast message received from %d.%d: '%u'\n",
-         from->u8[0], from->u8[1], (unsigned)*(uint32_t *)packetbuf_dataptr());
+  LOG_INFO("Received seq %u from ", *(unsigned *)data);
+  LOG_INFO_LLADDR(src);
+  LOG_INFO_(" rssi %d\n",
+    (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
+  );
 }
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
-static struct broadcast_conn broadcast;
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
+PROCESS(dual_radio_demo, "cc1200 demo process");
+AUTOSTART_PROCESSES(&dual_radio_demo);
+/*---------------------------------------------------------------------------*/
+PROCESS_THREAD(dual_radio_demo, ev, data)
 {
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+  static uint32_t count = 0;
+  radio_value_t radio_tx_mode;
 
   PROCESS_BEGIN();
 
-  broadcast_open(&broadcast, 129, &broadcast_call);
+  /* Initialize NullNet */
+  nullnet_buf = (uint8_t *)&count;
+  nullnet_len = sizeof(count);
+  nullnet_set_input_callback(input_callback);
 
   etimer_set(&et, LOOP_INTERVAL);
-/*
-  if(linkaddr_node_addr.u8[1] % 2) {
-    multiradio_select(&cc2538_rf_driver);
-    NETSTACK_RADIO.off();
-    multiradio_select(&cc1200_driver);
-    NETSTACK_RADIO.on();
-  } else {
-    multiradio_select(&cc1200_driver);
-    NETSTACK_RADIO.off();
-    multiradio_select(&cc2538_rf_driver);
-    NETSTACK_RADIO.on();
-  }
-  */
-  multiradio_select(&cc1200_driver);
-  NETSTACK_RADIO.on();
+
   multiradio_select(&cc2538_rf_driver);
   NETSTACK_RADIO.off();
-  
-  if(linkaddr_node_addr.u8[0] == 15 && linkaddr_node_addr.u8[1] == 204) {
+
+  multiradio_select(&cc1200_driver);
+  /* cc1200: Radio Tx mode: disable CCA */
+  NETSTACK_RADIO.get_value(RADIO_PARAM_TX_MODE, &radio_tx_mode);
+  radio_tx_mode &= ~RADIO_TX_MODE_SEND_ON_CCA;
+  NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
+
+  NETSTACK_RADIO.on();
+  multiradio_select(&cc2538_rf_driver);
+  NETSTACK_RADIO.on();
+
+  if(node_id == 1) {
     while(1) {
       PROCESS_YIELD();
       if(ev == PROCESS_EVENT_TIMER) {
-        printf("Broadcast --> %u\n", (unsigned)counter);
-        leds_toggle(LEDS_RED);
-        if(counter % 2 == 0) {
-          printf("Select cc1200\n");
+        const char *radio_str;
+        /* Alternate between sending over cc2538 and cc1200 */
+        if(count % 2 == 0) {
+          radio_str = "cc1200";
           multiradio_select(&cc1200_driver);
         } else {
-          printf("Select cc2538\n");
+          radio_str = "cc2538";
           multiradio_select(&cc2538_rf_driver);
         }
-        packetbuf_copyfrom(&counter, 4);
-        broadcast_send(&broadcast);
-        counter++;
+        LOG_INFO("Sending seq %u on %s\n", (unsigned)count, radio_str);
+        NETSTACK_NETWORK.output(NULL);
+        count++;
         etimer_set(&et, LOOP_INTERVAL);
       }
     }
@@ -128,4 +130,3 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 /**
  * @}
  */
-
