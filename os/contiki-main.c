@@ -107,6 +107,11 @@ main(void)
 
   platform_init_stage_three();
 
+#if BUILD_WITH_DEPLOYMENT
+  deployment_init();
+  LOG_DBG("With Deployment\n");
+#endif /* BUILD_WITH_ORCHESTRA */
+
 #if BUILD_WITH_ORCHESTRA
   orchestra_init();
   LOG_DBG("With Orchestra\n");

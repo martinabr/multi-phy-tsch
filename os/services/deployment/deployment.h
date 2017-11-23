@@ -42,6 +42,7 @@
 #include "net/ipv6/uip.h"
 #include "net/linkaddr.h"
 
+void deployment_init(void);
 /* Returns the total number of nodes in the deployment */
 uint16_t get_node_id(void);
 /* Returns a node-index from a node's linkaddr */
@@ -58,8 +59,6 @@ void set_ipaddr_from_linkaddr(uip_ipaddr_t *ipaddr, const linkaddr_t *lladdr);
 void set_ipaddr_from_id(uip_ipaddr_t *ipaddr, uint16_t id);
 /* Sets an linkaddr from a link-layer address */
 void set_linkaddr_from_id(linkaddr_t *lladdr, uint16_t id);
-/* Initializes global IPv6 and creates DODAG */
-int deployment_init(uip_ipaddr_t *ipaddr, uip_ipaddr_t *br_prefix, int root_id);
 /* Returns a node id at random */
 uint16_t get_random_node_id();
 /* Iterates over all node IDs */
