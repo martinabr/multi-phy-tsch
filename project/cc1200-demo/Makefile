@@ -1,7 +1,4 @@
-DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
-CONTIKI_PROJECT = cc1200-demo
-
-all: $(CONTIKI_PROJECT)
+all: cc1200-demo
 
 TARGET ?= zoul
 BOARD ?= firefly

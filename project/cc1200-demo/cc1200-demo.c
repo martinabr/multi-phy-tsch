@@ -42,11 +42,7 @@
  */
 /*---------------------------------------------------------------------------*/
 #include "contiki.h"
-#include "cpu.h"
 #include "sys/etimer.h"
-#include "dev/watchdog.h"
-#include "dev/serial-line.h"
-#include "dev/sys-ctrl.h"
 #include "net/nullnet/nullnet.h"
 #include "net/netstack.h"
 #include "net/packetbuf.h"
@@ -83,6 +79,8 @@ AUTOSTART_PROCESSES(&cc1200_demo_process);
 PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
   static uint32_t count = 0;
+  radio_value_t radio_tx_mode;
+
   PROCESS_BEGIN();
 
   /* Initialize NullNet */
@@ -93,18 +91,17 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   etimer_set(&et, LOOP_INTERVAL);
 
   /* Radio Tx mode: disable CCA */
-  radio_value_t radio_tx_mode;
   NETSTACK_RADIO.get_value(RADIO_PARAM_TX_MODE, &radio_tx_mode);
   radio_tx_mode &= ~RADIO_TX_MODE_SEND_ON_CCA;
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
   node_id = get_node_id();
-  NETSTACK_MAC.on();
 
   while(1) {
     PROCESS_YIELD();
     if(ev == PROCESS_EVENT_TIMER) {
+      LOG_INFO("Hello %u\n", node_id);
       if(node_id == 1) {
         LOG_INFO("Sending seq %u\n", (unsigned)count);
         NETSTACK_NETWORK.output(NULL);
