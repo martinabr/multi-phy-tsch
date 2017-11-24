@@ -50,6 +50,7 @@
 
 #include "sys/log.h"
 #include "net/ipv6/ip64-addr.h"
+#include "deployment/deployment.h"
 
 int curr_log_level_rpl = LOG_CONF_LEVEL_RPL;
 int curr_log_level_tcpip = LOG_CONF_LEVEL_TCPIP;
@@ -151,7 +152,11 @@ log_lladdr_compact(const linkaddr_t *lladdr)
   if(lladdr == NULL || linkaddr_cmp(lladdr, &linkaddr_null)) {
     LOG_OUTPUT("LL-NULL");
   } else {
+#if BUILD_WITH_DEPLOYMENT
+    LOG_OUTPUT("LL-%04u", nodeid_from_linkaddr(lladdr));
+#else /* BUILD_WITH_DEPLOYMENT */
     LOG_OUTPUT("LL-%04x", UIP_HTONS(lladdr->u16[LINKADDR_SIZE/2-1]));
+#endif /* BUILD_WITH_DEPLOYMENT */
   }
 }
 /*---------------------------------------------------------------------------*/

@@ -45,29 +45,9 @@
 void deployment_init(void);
 /* Returns the total number of nodes in the deployment */
 uint16_t get_node_id(void);
-/* Returns a node-index from a node's linkaddr */
-uint16_t node_index_from_linkaddr(const linkaddr_t *addr);
 /* Returns a node-id from a node's link-layer address */
-uint16_t node_id_from_linkaddr(const linkaddr_t *addr);
-/* Returns a node-id from a node's IPv6 address */
-uint16_t node_id_from_ipaddr(const uip_ipaddr_t *addr);
-/* Returns a node-index from a node-id */
-uint16_t get_node_index_from_id(uint16_t id);
-/* Sets an IPv6 from a link-layer address */
-void set_ipaddr_from_linkaddr(uip_ipaddr_t *ipaddr, const linkaddr_t *lladdr);
-/* Sets an IPv6 from a link-layer address */
-void set_ipaddr_from_id(uip_ipaddr_t *ipaddr, uint16_t id);
+uint16_t nodeid_from_linkaddr(const linkaddr_t *addr);
 /* Sets an linkaddr from a link-layer address */
-void set_linkaddr_from_id(linkaddr_t *lladdr, uint16_t id);
-/* Returns a node id at random */
-uint16_t get_random_node_id();
-/* Iterates over all node IDs */
-uint16_t get_next_node_id();
-
-void deployment_set_seen(uint16_t id, int seen);
-int deployment_get_seen(uint16_t id);
-
-/* Our absolute index in the id_mac table */
-extern uint16_t node_index;
+void linkaddr_from_nodeid(linkaddr_t *lladdr, uint16_t id);
 
 #endif /* DEPLOYMENT_H */

@@ -55,6 +55,8 @@
 #define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_fsk_1_2kbps
 
+#define LOG_CONF_WITH_COMPACT_ADDR 1
+
 #endif /* PROJECT_CONF_H_ */
 
 /**

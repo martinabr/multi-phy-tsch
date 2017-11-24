@@ -66,7 +66,7 @@
 #define TSCH_LOG_CONF_LEVEL 2
 
 #undef TSCH_LOG_CONF_ID_FROM_LINKADDR
-#define TSCH_LOG_CONF_ID_FROM_LINKADDR node_id_from_linkaddr
+#define TSCH_LOG_CONF_ID_FROM_LINKADDR nodeid_from_linkaddr
 
 /* IEEE802.15.4 PANID */
 #undef IEEE802154_CONF_PANID

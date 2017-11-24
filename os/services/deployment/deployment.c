@@ -78,20 +78,21 @@ static const struct id_mac id_mac_list[] = {
     { 0, {{0}}}
 };
 
+/*---------------------------------------------------------------------------*/
 void
 deployment_init(void)
 {
   node_id = get_node_id();
 }
-/* Returns the node's node-id */
+/*---------------------------------------------------------------------------*/
 uint16_t
 get_node_id(void)
 {
-  return node_id_from_linkaddr((const linkaddr_t *)&linkaddr_node_addr);
+  return nodeid_from_linkaddr((const linkaddr_t *)&linkaddr_node_addr);
 }
-/* Returns a node-id from a node's linkaddr */
+/*---------------------------------------------------------------------------*/
 uint16_t
-node_id_from_linkaddr(const linkaddr_t *lladdr)
+nodeid_from_linkaddr(const linkaddr_t *lladdr)
 {
   if(lladdr == NULL) {
     return 0;
@@ -106,10 +107,9 @@ node_id_from_linkaddr(const linkaddr_t *lladdr)
   }
   return 0;
 }
-/* Sets an linkaddr from a link-layer address */
-/* Sets a linkaddr from a node-id */
+/*---------------------------------------------------------------------------*/
 void
-set_linkaddr_from_id(linkaddr_t *lladdr, uint16_t id)
+linkaddr_from_nodeid(linkaddr_t *lladdr, uint16_t id)
 {
   if(id == 0 || lladdr == NULL) {
     return;
@@ -123,3 +123,4 @@ set_linkaddr_from_id(linkaddr_t *lladdr, uint16_t id)
     curr++;
   }
 }
+/*---------------------------------------------------------------------------*/

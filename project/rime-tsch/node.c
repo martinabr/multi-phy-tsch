@@ -75,7 +75,7 @@ static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
    PRINTF("App: received from %u seq %u rssi %d\n",
-         node_id_from_linkaddr(from),
+         nodeid_from_linkaddr(from),
          (unsigned)*(uint32_t *)packetbuf_dataptr(),
          (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
          );
