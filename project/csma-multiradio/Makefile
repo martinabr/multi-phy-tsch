@@ -1,11 +1,8 @@
-all: cc1200-demo
+all: csma-multiradio
 
 TARGET ?= zoul
 BOARD ?= firefly
 MODULES += os/services/deployment
-
-CHANNEL ?= 0
-CFLAGS += -DCUSTOM_CHANNEL=$(CHANNEL)
 
 CONTIKI = ../..
 MAKE_NET = MAKE_NET_NULLNET
