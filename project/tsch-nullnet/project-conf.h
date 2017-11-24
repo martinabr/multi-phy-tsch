@@ -45,47 +45,15 @@
 #define WITH_SINGLE_SENDER 0
 #define WITH_SINGLE_CHANNEL 0
 
-/* Netstack layers */
-#undef NETSTACK_CONF_MAC
-#define NETSTACK_CONF_MAC     tschmac_driver
-#undef NETSTACK_CONF_RDC
-#define NETSTACK_CONF_RDC     nordc_driver
-#undef NETSTACK_CONF_FRAMER
-#define NETSTACK_CONF_FRAMER  framer_802154
-
-/* IEEE802.15.4 frame version */
-#undef FRAME802154_CONF_VERSION
-#define FRAME802154_CONF_VERSION FRAME802154_IEEE802154E_2012
-
-#undef TSCH_CONF_AUTOSELECT_TIME_SOURCE
-#define TSCH_CONF_AUTOSELECT_TIME_SOURCE 0
-
-/* TSCH logging. 0: disabled. 1: basic log. 2: with delayed
- * log messages from interrupt */
-#undef TSCH_LOG_CONF_LEVEL
-#define TSCH_LOG_CONF_LEVEL 2
-
-#undef TSCH_LOG_CONF_ID_FROM_LINKADDR
-#define TSCH_LOG_CONF_ID_FROM_LINKADDR nodeid_from_linkaddr
-
 /* IEEE802.15.4 PANID */
 #undef IEEE802154_CONF_PANID
-#define IEEE802154_CONF_PANID 0xabcd
+#define IEEE802154_CONF_PANID 0xdf10
 
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #undef TSCH_CONF_AUTOSTART
 #define TSCH_CONF_AUTOSTART 0
 
-/* Needed for CC2538 platforms only */
-/* For TSCH we have to use the more accurate crystal oscillator
- * by default the RC oscillator is activated */
-#undef SYS_CTRL_CONF_OSC32K_USE_XTAL
-#define SYS_CTRL_CONF_OSC32K_USE_XTAL 1
-
-#undef TSCH_CONF_HW_FRAME_FILTERING
-#define TSCH_CONF_HW_FRAME_FILTERING    0
-
-#if WITH_MULTIRADIO       
+#if WITH_MULTIRADIO
 #undef  NETSTACK_CONF_RADIO
 #define NETSTACK_CONF_RADIO multiradio_driver
 #undef TSCH_CONF_SCANNING_RADIO

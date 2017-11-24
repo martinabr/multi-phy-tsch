@@ -1,14 +1,9 @@
-CONTIKI=../../..
-CONTIKI_PROJECT = node
-CFLAGS += -DPROJECT_CONF_H=\"project-conf.h\"
-
+all: tsch-nullnet
 TARGET ?= zoul
 BOARD ?= firefly
 APPS = deployment
 
-CONTIKI_WITH_RIME = 1
-MODULES += core/net/mac/tsch
-
-all: $(CONTIKI_PROJECT)
-
+CONTIKI = ../..
+MAKE_MAC = MAKE_MAC_TSCH
+MAKE_NET = MAKE_NET_NULLNET
 include $(CONTIKI)/Makefile.include
