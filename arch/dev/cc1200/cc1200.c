@@ -52,8 +52,6 @@ static struct tsch_asn_divisor_t tsch_hopping_sequence_divisor;
 
 static int16_t rssi;
 static rtimer_clock_t sfd_timestamp = 0;
-/* Are we currently in poll mode? Disabled by default */
-static uint8_t volatile poll_mode = 0;
 
 /*---------------------------------------------------------------------------*/
 /* Various implementation specific defines */
@@ -557,11 +555,9 @@ calculate_freq(uint8_t channel);
 /* Update rf channel if possible, else postpone it (-> pollhandler). */
 static int
 set_channel(uint8_t channel);
-#if !CC1200_NO_HDR_CHECK
 /* Validate address and send ACK if requested. */
 static int
 addr_check_auto_ack(uint8_t *frame, uint16_t frame_len);
-#endif
 /*---------------------------------------------------------------------------*/
 /* Handle tasks left over from rx interrupt or because SPI was locked */
 static void pollhandler(void);
@@ -638,7 +634,7 @@ pollhandler(void)
     set_channel(new_rf_channel);
   }
 
-  if(poll_mode == 0 && rx_pkt_len > 0) {
+  if((rx_mode_value & RADIO_RX_MODE_POLL_MODE) == 0 && rx_pkt_len > 0) {
 
     int len;
 
@@ -1208,12 +1204,6 @@ off(void)
 
 }
 /*---------------------------------------------------------------------------*/
-static void
-set_poll_mode(uint8_t enable)
-{
-  poll_mode = enable;
-}
-/*---------------------------------------------------------------------------*/
 /**
  * \brief Reads the current signal strength (RSSI)
  * \return The current RSSI in dBm
@@ -1409,7 +1399,6 @@ set_value(radio_param_t param, radio_value_t value)
   case RADIO_PARAM_RX_MODE:
 
     rx_mode_value = value;
-    set_poll_mode((value & RADIO_RX_MODE_POLL_MODE) != 0);
 
     return RADIO_RESULT_OK;
 
@@ -2232,7 +2221,6 @@ set_channel(uint8_t channel)
   return CHANNEL_UPDATE_SUCCEEDED;
 
 }
-#if !CC1200_NO_HDR_CHECK
 /*---------------------------------------------------------------------------*/
 /* Check broadcast address. */
 static int
@@ -2320,7 +2308,6 @@ addr_check_auto_ack(uint8_t *frame, uint16_t frame_len)
   return INVALID_FRAME;
 
 }
-#endif
 /*---------------------------------------------------------------------------*/
 /*
  * The CC1200 interrupt handler: called by the hardware interrupt
@@ -2531,10 +2518,7 @@ cc1200_rx_interrupt(void)
         WARNING("RF: Packet pending!\n");
       } else {
 
-        int ret = ADDR_CHECK_OK;
-#if !CC1200_NO_HDR_CHECK
-        addr_check_auto_ack(buf, bytes_read);
-#endif /* !CC1200_NO_HDR_CHECK */
+        int ret = addr_check_auto_ack(buf, bytes_read);
 
         if((ret == ADDR_CHECK_OK) ||
            (ret == ADDR_CHECK_OK_ACK_SEND)) {
