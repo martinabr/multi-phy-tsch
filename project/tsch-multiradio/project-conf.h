@@ -41,62 +41,43 @@
 #ifndef __PROJECT_CONF_H__
 #define __PROJECT_CONF_H__
 
-#define WITH_MULTIRADIO 1
-#define WITH_SINGLE_SENDER 0
-#define WITH_SINGLE_CHANNEL 0
+/* Logging */
+#define LOG_CONF_LEVEL_MAC LOG_LEVEL_WARN
+#define TSCH_LOG_CONF_PER_SLOT 1
+#define LOG_CONF_WITH_COMPACT_ADDR 1
 
 /* IEEE802.15.4 PANID */
-#undef IEEE802154_CONF_PANID
 #define IEEE802154_CONF_PANID 0xdf10
 
-/* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
-#undef TSCH_CONF_AUTOSTART
-#define TSCH_CONF_AUTOSTART 0
-
-#if WITH_MULTIRADIO
-#undef  NETSTACK_CONF_RADIO
+/* Use multiradio: both cc1200 and cc2538 */
 #define NETSTACK_CONF_RADIO multiradio_driver
-#undef TSCH_CONF_SCANNING_RADIO
 #define TSCH_CONF_SCANNING_RADIO cc1200_driver
-#undef TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL
-#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0 /* No 6TiSCH minimal schedule */
-
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
-//#define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
-#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
+#define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
-
-#else /* WITH_MULTIRADIO */
-
-#undef TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL
-#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0 /* No 6TiSCH minimal schedule */
-#undef  NETSTACK_CONF_RADIO
-#define NETSTACK_CONF_RADIO         cc1200_driver
-#undef TSCH_CONF_SCANNING_RADIO
-#define TSCH_CONF_SCANNING_RADIO NETSTACK_CONF_RADIO
-//#define NETSTACK_CONF_RADIO         cc1200_driver
-#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
-//#define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
-//#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
-#define CC1200_NO_HDR_CHECK         1
-#endif /* WITH_MULTIRADIO */
-
-#define TSCH_SCHEDULE_CONF_MAX_LINKS 60
-#define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID  1
-#define CC1200_CONF_USE_GPIO2       1
-#define CC1200_CONF_USE_RX_WATCHDOG 0
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
-#define TSCH_CONF_HOPPING_SEQUENCE_MAX_LEN 34
-#if WITH_SINGLE_CHANNEL
-#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-#else
-#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 16, 17, 18, 19, 26, 15, 25, 22, 23, 11, 12, 13, 24, 14, 20, 21, 1, 32, 6, 5, 10, 28, 30, 27, 29, 8, 0, 4, 31, 3, 9, 7, 33, 2 }
-#endif
+
+/* Tell TSCH to use multiple radios */
+#define TSCH_WITH_MULTIRADIO 1
+/* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
+#define TSCH_CONF_AUTOSTART 0
+/* No 6TiSCH minimal schedule */
+#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0
+/* We will need more than 32 links */
+#define TSCH_SCHEDULE_CONF_MAX_LINKS 60
+#define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
+
+/* EB and KA */
 #define TSCH_CONF_EB_PERIOD (4 * CLOCK_SECOND)
 #define TSCH_CONF_MAX_EB_PERIOD (4 * CLOCK_SECOND)
 #define TSCH_CONF_KEEPALIVE_TIMEOUT 0
 #define TSCH_CONF_MAX_KEEPALIVE_TIMEOUT 0
 #define TSCH_CONF_DESYNC_THRESHOLD (90 * CLOCK_SECOND)
-#define TSCH_CONF_ADAPTIVE_TIMESYNC 1
+
+#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ \
+  16, 17, 18, 19, 26, 15, 25, 22, 23, 11, \
+  12, 13, 24, 14, 20, 21,  1, 32,  6,  5, \
+  10, 28, 30, 27, 29,  8,  0,  4, 31,  3, \
+   9,  7, 33,  2 }
 
 #endif /* __PROJECT_CONF_H__ */

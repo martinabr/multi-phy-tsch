@@ -970,7 +970,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       is_active_slot = current_packet != NULL || (current_link->link_options & LINK_OPTION_RX);
       if(is_active_slot) {
         /* Select radio and timeslot timing */
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
         struct tsch_slotframe *sf = tsch_schedule_get_slotframe_by_handle(current_link->slotframe_handle);
         multiradio_select(sf->radio);
 #endif

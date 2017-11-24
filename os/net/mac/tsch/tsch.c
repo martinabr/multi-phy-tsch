@@ -242,9 +242,9 @@ tsch_reset(void)
   TSCH_ASN_INIT(tsch_current_asn, 0, 0);
   current_link = NULL;
   /* Reset timeslot timing to defaults */
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
   multiradio_select(&TSCH_CONF_SCANNING_RADIO);
-#endif /* WITH_MULTIRADIO */
+#endif /* TSCH_WITH_MULTIRADIO */
   if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
     for(i = 0; i < tsch_ts_elements_count; i++) {
       tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
@@ -586,9 +586,9 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   /* TSCH timeslot timing */
   for(i = 0; i < tsch_ts_elements_count; i++) {
     if(ies.ie_tsch_timeslot_id == 0) {
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
       multiradio_select(&TSCH_CONF_SCANNING_RADIO);
-#endif /* WITH_MULTIRADIO */
+#endif /* TSCH_WITH_MULTIRADIO */
       if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
         tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
       } else {
@@ -735,7 +735,7 @@ PT_THREAD(tsch_scan(struct pt *pt))
     int is_packet_pending = 0;
     clock_time_t now_time = clock_time();
 
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
     multiradio_select(&TSCH_CONF_SCANNING_RADIO);
 #endif
     if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
@@ -911,7 +911,7 @@ tsch_init(void)
   radio_value_t radio_tx_mode;
   rtimer_clock_t t;
 
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
   static const struct radio_driver * const radios[] = MULTIRADIO_DRIVERS;
   static const int num_radios = sizeof(radios) / sizeof(struct radio_driver *);
   int i;
@@ -958,7 +958,7 @@ tsch_init(void)
     return;
   }
 
-#if WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO
   }
 #endif
 
