@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inria.
+ * Copyright (c) 2015, Zolertia - http://www.zolertia.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,128 +26,71 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * This file is part of the Contiki operating system.
- *
  */
-
+/*---------------------------------------------------------------------------*/
 /**
- * \file
- *         An example of Rime/TSCH
- * \author
- *         Simon Duquennoy <simon.duquennoy@inria.fr>
+ * \addtogroup zoul-cc1200-demo Zoul on-board CC1200 RF transceiver test
  *
+ * Demonstrates the use of the TI CC1200 RF transceiver on Sub-1GHz
+ * @{
+ *
+ * \file
+ *         Test file for the CC1200 demo
+ *
+ * \author
+ *         Antonio Lignan <alinan@zolertia.com>
  */
+/*---------------------------------------------------------------------------*/
+#include "contiki.h"
+#include "sys/etimer.h"
+#include "net/nullnet/nullnet.h"
+#include "net/netstack.h"
+#include "net/packetbuf.h"
+#include "deployment/deployment.h"
+#include "net/mac/tsch/tsch-schedule.h"
 
 #include <stdio.h>
-#include "contiki-conf.h"
-#include "net/netstack.h"
-#include "net/rime/rime.h"
-#include "net/mac/tsch/tsch.h"
-#include "net/mac/tsch/tsch-schedule.h"
-#include "dev/multiradio.h"
-#include "apps/deployment/deployment.h"
+#include <stdint.h>
 
-#include "cc1200-const.h"
-#include "cc1200-conf.h"
-#include "cc1200-arch.h"
-#include "cc1200-rf-cfg.h"
+/* Log configuration */
+#include "sys/log.h"
+#define LOG_MODULE "App"
+#define LOG_LEVEL LOG_LEVEL_INFO
 
-extern const cc1200_rf_cfg_t CC1200_RF_CFG;
-
-static uint32_t counter;
+#define LOOP_INTERVAL       (CLOCK_SECOND)
 #define TSCH_COORDINATOR_ID 1
-#define BROADCAST_CHANNEL 129
-
-#define DEBUG WITH_SINGLE_SENDER
-
-#if DEBUG
-#define PRINTF(...) printf(__VA_ARGS__)
-#else
-#define PRINTF(...)
-#endif
 
 /*---------------------------------------------------------------------------*/
-PROCESS(test_process, "Rime Node");
-AUTOSTART_PROCESSES(&test_process);
-
+static struct etimer et;
 /*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+void
+input_callback(const void *data, uint16_t len,
+  const linkaddr_t *src, const linkaddr_t *dest)
 {
-   PRINTF("App: received from %u seq %u rssi %d\n",
-         nodeid_from_linkaddr(from),
-         (unsigned)*(uint32_t *)packetbuf_dataptr(),
-         (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
-         );
+  LOG_INFO("Received seq %u from ", *(unsigned *)data);
+  LOG_INFO_LLADDR(src);
+  LOG_INFO_(" rssi %d\n",
+    (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
+  );
 }
-static const struct broadcast_callbacks bc_rx = { broadcast_recv };
-static struct broadcast_conn bc;
-
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(test_process, ev, data)
+PROCESS(cc1200_demo_process, "cc1200 demo process");
+AUTOSTART_PROCESSES(&cc1200_demo_process);
+/*---------------------------------------------------------------------------*/
+PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
-  static struct etimer et;
+  static uint32_t count = 0;
+  struct tsch_slotframe *sf;
   int i;
+
   PROCESS_BEGIN();
 
-  etimer_set(&et, 4*CLOCK_SECOND);
-  PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+  /* Initialize NullNet */
+  nullnet_buf = (uint8_t *)&count;
+  nullnet_len = sizeof(count);
+  nullnet_set_input_callback(input_callback);
 
-  node_id = get_node_id();
-  tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
-
-#if WITH_MULTIRADIO
-  multiradio_select(&cc1200_driver);
-  NETSTACK_RADIO.off();
-  multiradio_select(&cc2538_rf_driver);
-  NETSTACK_RADIO.off();
-
-  struct tsch_slotframe *sf_cc1200;
-  sf_cc1200 = tsch_schedule_add_slotframe(0, 53);
-  sf_cc1200->radio = &cc1200_driver;
-  
-  struct tsch_slotframe *sf_cc2538;
-  sf_cc2538 = tsch_schedule_add_slotframe(1, 53);
-  sf_cc2538->radio = &cc2538_rf_driver;
-    
-  tsch_schedule_add_link(sf_cc1200,
-      LINK_OPTION_TX,
-      LINK_TYPE_ADVERTISING_ONLY, &tsch_broadcast_address,
-      node_id - 1, 0);
-  tsch_schedule_add_link(sf_cc1200,
-      LINK_OPTION_SAMPLE_RSSI,
-      LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      25, 0);
-  for(i = 0; i < 25; i++) {
-    if(i != node_id - 1) {
-      tsch_schedule_add_link(sf_cc1200,
-          LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
-          LINK_TYPE_ADVERTISING_ONLY, &tsch_broadcast_address,
-          i, 0);
-    }
-  }
-  tsch_schedule_add_link(sf_cc2538,
-      LINK_OPTION_TX,
-      LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      26 + node_id - 1, 0);
-  tsch_schedule_add_link(sf_cc2538,
-      LINK_OPTION_SAMPLE_RSSI,
-      LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      26 + 25, 0);
-  for(i = 0; i < 25; i++) {
-    if(i != node_id - 1) {
-      tsch_schedule_add_link(sf_cc2538,
-          LINK_OPTION_RX,
-          LINK_TYPE_NORMAL, &tsch_broadcast_address,
-          26 + i, 0);
-    }
-  }
-  //tsch_schedule_add_link(sf_cc2538,
-    //  LINK_OPTION_TX | LINK_OPTION_RX,
-//      LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      //3, 0);
-#else /* WITH_MULTIRADIO */
-  struct tsch_slotframe *sf;
+  /* Create TSCH schedule */
   sf = tsch_schedule_add_slotframe(0, 29);
   tsch_schedule_add_link(sf,
        LINK_OPTION_TX,
@@ -161,26 +104,27 @@ PROCESS_THREAD(test_process, ev, data)
          i, 0);
     }
   }
-#endif /* WITH_MULTIRADIO */
 
+  /* Initialize TSCH */
+  tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
   NETSTACK_MAC.on();
-  broadcast_open(&bc, BROADCAST_CHANNEL, &bc_rx);
 
-#if WITH_SINGLE_SENDER
-  if(node_id == 1)
-#endif
-  {
+  if(node_id == 1) {
+    etimer_set(&et, LOOP_INTERVAL);
     while(1) {
-      etimer_set(&et, 8*CLOCK_SECOND);
-      PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-
-      PRINTF("App: sending seq %u\n", (unsigned)counter);
-      packetbuf_copyfrom(&counter, sizeof(counter) + 4);
-      broadcast_send(&bc);
-      counter++;
+      PROCESS_YIELD();
+      if(ev == PROCESS_EVENT_TIMER) {
+        LOG_INFO("Sending seq %u\n", (unsigned)count);
+        NETSTACK_NETWORK.output(NULL);
+        count++;
+        etimer_reset(&et);
+      }
     }
   }
 
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
+/**
+ * @}
+ */

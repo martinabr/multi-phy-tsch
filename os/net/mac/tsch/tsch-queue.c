@@ -58,8 +58,8 @@
 #include "net/mac/tsch/tsch-schedule.h"
 #include "net/mac/tsch/tsch-slot-operation.h"
 #include "net/mac/tsch/tsch-log.h"
+#include "deployment/deployment.h"
 #include <string.h>
-#include "apps/deployment/deployment.h"
 
 /* Log configuration */
 #include "sys/log.h"

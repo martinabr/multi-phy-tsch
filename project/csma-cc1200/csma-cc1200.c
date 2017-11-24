@@ -87,23 +87,23 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   nullnet_len = sizeof(count);
   nullnet_set_input_callback(input_callback);
 
-  etimer_set(&et, LOOP_INTERVAL);
-
   /* Radio Tx mode: disable CCA */
   NETSTACK_RADIO.get_value(RADIO_PARAM_TX_MODE, &radio_tx_mode);
   radio_tx_mode &= ~RADIO_TX_MODE_SEND_ON_CCA;
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
-  while(1) {
-    PROCESS_YIELD();
-    if(ev == PROCESS_EVENT_TIMER) {
-      if(node_id == 1) {
-        LOG_INFO("Sending seq %u\n", (unsigned)count);
-        NETSTACK_NETWORK.output(NULL);
-        count++;
+  if(node_id == 1) {
+    etimer_set(&et, LOOP_INTERVAL);
+    while(1) {
+      PROCESS_YIELD();
+      if(ev == PROCESS_EVENT_TIMER) {
+          LOG_INFO("Sending seq %u\n", (unsigned)count);
+          NETSTACK_NETWORK.output(NULL);
+          count++;
+        }
+        etimer_reset(&et);
       }
-      etimer_set(&et, LOOP_INTERVAL);
     }
   }
 

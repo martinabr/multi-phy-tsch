@@ -88,8 +88,6 @@ PROCESS_THREAD(dual_radio_demo, ev, data)
   nullnet_len = sizeof(count);
   nullnet_set_input_callback(input_callback);
 
-  etimer_set(&et, LOOP_INTERVAL);
-
   multiradio_select(&cc2538_rf_driver);
   NETSTACK_RADIO.off();
 
@@ -104,6 +102,7 @@ PROCESS_THREAD(dual_radio_demo, ev, data)
   NETSTACK_RADIO.on();
 
   if(node_id == 1) {
+    etimer_set(&et, LOOP_INTERVAL);
     while(1) {
       PROCESS_YIELD();
       if(ev == PROCESS_EVENT_TIMER) {
@@ -119,7 +118,7 @@ PROCESS_THREAD(dual_radio_demo, ev, data)
         LOG_INFO("Sending seq %u on %s\n", (unsigned)count, radio_str);
         NETSTACK_NETWORK.output(NULL);
         count++;
-        etimer_set(&et, LOOP_INTERVAL);
+        etimer_reset(&et);
       }
     }
   }

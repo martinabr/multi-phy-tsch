@@ -45,7 +45,7 @@
 #include "net/mac/tsch/tsch.h"
 #include "net/mac/tsch/tsch-schedule.h"
 #include "dev/multiradio.h"
-#include "apps/deployment/deployment.h"
+#include "deployment/deployment.h"
 
 #include "cc1200-const.h"
 #include "cc1200-conf.h"
@@ -105,11 +105,11 @@ PROCESS_THREAD(test_process, ev, data)
   struct tsch_slotframe *sf_cc1200;
   sf_cc1200 = tsch_schedule_add_slotframe(0, 53);
   sf_cc1200->radio = &cc1200_driver;
-  
+
   struct tsch_slotframe *sf_cc2538;
   sf_cc2538 = tsch_schedule_add_slotframe(1, 53);
   sf_cc2538->radio = &cc2538_rf_driver;
-    
+
   tsch_schedule_add_link(sf_cc1200,
       LINK_OPTION_TX,
       LINK_TYPE_ADVERTISING_ONLY, &tsch_broadcast_address,

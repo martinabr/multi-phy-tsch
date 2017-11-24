@@ -56,6 +56,7 @@
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define CC1200_NO_HDR_CHECK         1
 //#define CC1200_PRINT_ON_RX          1
+#define LOG_CONF_WITH_COMPACT_ADDR 1
 
 #endif /* PROJECT_CONF_H_ */
 

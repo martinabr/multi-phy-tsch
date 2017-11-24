@@ -1008,6 +1008,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
               snprintf(log->message, sizeof(log->message),
                   "RSSI sample: %d", rssi);
         );
+        (void)rssi;
       }
       TSCH_DEBUG_SLOT_END();
     }
