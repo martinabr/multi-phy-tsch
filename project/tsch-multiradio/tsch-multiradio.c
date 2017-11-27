@@ -58,7 +58,8 @@
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-#define LOOP_INTERVAL       (CLOCK_SECOND)
+/* Same interval for data packets as we have for EBs */
+#define LOOP_INTERVAL       (TSCH_CONF_EB_PERIOD)
 #define TSCH_COORDINATOR_ID 1
 
 /*---------------------------------------------------------------------------*/
@@ -142,16 +143,14 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
   NETSTACK_MAC.on();
 
-  if(node_id == 1) {
-    etimer_set(&et, LOOP_INTERVAL);
-    while(1) {
-      PROCESS_YIELD();
-      if(ev == PROCESS_EVENT_TIMER) {
-        LOG_INFO("Sending seq %u\n", (unsigned)count);
-        NETSTACK_NETWORK.output(NULL);
-        count++;
-        etimer_reset(&et);
-      }
+  etimer_set(&et, LOOP_INTERVAL);
+  while(1) {
+    PROCESS_YIELD();
+    if(ev == PROCESS_EVENT_TIMER) {
+      LOG_INFO("Sending seq %u\n", (unsigned)count);
+      NETSTACK_NETWORK.output(NULL);
+      count++;
+      etimer_reset(&et);
     }
   }
 
