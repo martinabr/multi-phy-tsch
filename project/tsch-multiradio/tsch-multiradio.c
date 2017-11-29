@@ -69,7 +69,7 @@ void
 input_callback(const void *data, uint16_t len,
   const linkaddr_t *src, const linkaddr_t *dest)
 {
-  LOG_INFO("Received seq %u from ", *(unsigned *)data);
+  LOG_INFO("Received seq %u from ", (unsigned)(*(uint32_t *)data));
   LOG_INFO_LLADDR(src);
   LOG_INFO_(" rssi %d\n",
     (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
@@ -90,7 +90,7 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 
   /* Initialize NullNet */
   nullnet_buf = (uint8_t *)&count;
-  nullnet_len = sizeof(count);
+  nullnet_len = sizeof(count) + 8; /* Add 8 bytes to match the EB len*/
   nullnet_set_input_callback(input_callback);
 
   /* Create TSCH schedule */

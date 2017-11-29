@@ -66,7 +66,7 @@ void
 input_callback(const void *data, uint16_t len,
   const linkaddr_t *src, const linkaddr_t *dest)
 {
-  LOG_INFO("Received seq %u from ", *(unsigned *)data);
+  LOG_INFO("Received seq %u from ", (unsigned)(*(uint32_t *)data));
   LOG_INFO_LLADDR(src);
   LOG_INFO_(" rssi %d\n",
     (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
