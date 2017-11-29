@@ -77,6 +77,15 @@
 #define TSCH_CONF_MAX_EB_PERIOD (1 * CLOCK_SECOND)
 
 /*******************************************************/
+/*********************** EB IEs ************************/
+/*******************************************************/
+
+#define TSCH_PACKET_CONF_EB_WITH_TIMESLOT_TIMING              TSCH_PACKET_IE_DEFVAL
+#define TSCH_PACKET_CONF_EB_WITH_HOPPING_SEQUENCE             TSCH_PACKET_IE_DEFVAL
+#define TSCH_PACKET_CONF_EB_WITH_SLOTFRAME_AND_LINK           TSCH_PACKET_IE_DEFVAL
+#define TSCH_PACKET_CONF_EB_WITH_PAYLOAD_IE_LIST_TERMINATION  TSCH_PACKET_IE_ELIDED
+
+/*******************************************************/
 /******************* Configure 6top ********************/
 /*******************************************************/
 

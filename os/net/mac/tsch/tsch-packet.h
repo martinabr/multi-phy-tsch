@@ -48,25 +48,37 @@
 
 /******** Configuration *******/
 
+#define TSCH_PACKET_IE_ELIDED 0 /* Skip the IE altogether */
+#define TSCH_PACKET_IE_DEFVAL 1 /* Include short version of the IE, i.e. deffault value */
+#define TSCH_PACKET_IE_INLINE 2 /* Skip the IE altogether */
+
 /* TSCH EB: include timeslot timing Information Element? */
 #ifdef TSCH_PACKET_CONF_EB_WITH_TIMESLOT_TIMING
 #define TSCH_PACKET_EB_WITH_TIMESLOT_TIMING TSCH_PACKET_CONF_EB_WITH_TIMESLOT_TIMING
 #else
-#define TSCH_PACKET_EB_WITH_TIMESLOT_TIMING 0
+#define TSCH_PACKET_EB_WITH_TIMESLOT_TIMING TSCH_PACKET_IE_ELIDED
 #endif
 
 /* TSCH EB: include hopping sequence Information Element? */
 #ifdef TSCH_PACKET_CONF_EB_WITH_HOPPING_SEQUENCE
 #define TSCH_PACKET_EB_WITH_HOPPING_SEQUENCE TSCH_PACKET_CONF_EB_WITH_HOPPING_SEQUENCE
 #else
-#define TSCH_PACKET_EB_WITH_HOPPING_SEQUENCE 0
+#define TSCH_PACKET_EB_WITH_HOPPING_SEQUENCE TSCH_PACKET_IE_ELIDED
 #endif
 
 /* TSCH EB: include slotframe and link Information Element? */
 #ifdef TSCH_PACKET_CONF_EB_WITH_SLOTFRAME_AND_LINK
 #define TSCH_PACKET_EB_WITH_SLOTFRAME_AND_LINK TSCH_PACKET_CONF_EB_WITH_SLOTFRAME_AND_LINK
 #else
-#define TSCH_PACKET_EB_WITH_SLOTFRAME_AND_LINK 0
+#define TSCH_PACKET_EB_WITH_SLOTFRAME_AND_LINK TSCH_PACKET_IE_ELIDED
+#endif
+
+/* TSCH EB: include explicit temrination of payload IEs? Not necessary as all EBs have
+ * is header, header IE and payload IE, no actual pauyload. Disabled by default */
+#ifdef TSCH_PACKET_CONF_EB_WITH_PAYLOAD_IE_LIST_TERMINATION
+#define TSCH_PACKET_EB_WITH_PAYLOAD_IE_LIST_TERMINATION TSCH_PACKET_CONF_EB_WITH_PAYLOAD_IE_LIST_TERMINATION
+#else
+#define TSCH_PACKET_EB_WITH_PAYLOAD_IE_LIST_TERMINATION TSCH_PACKET_IE_ELIDED
 #endif
 
 /* Include source address in ACK? */
