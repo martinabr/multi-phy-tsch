@@ -53,7 +53,7 @@
 #define NETSTACK_CONF_RADIO multiradio_driver
 #define TSCH_CONF_SCANNING_RADIO cc1200_driver
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
-#define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
+#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 

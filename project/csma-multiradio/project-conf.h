@@ -50,7 +50,7 @@
 #define NETSTACK_CONF_RADIO         multiradio_driver
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 //#define CC1200_CONF_RF_CFG cc1200_868_2fsk_1_2kbps
-#define CC1200_CONF_RF_CFG cc1200_802154g_863_870_2gfsk_50kbps
+#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_fsk_1_2kbps
 
 #define LOG_CONF_WITH_COMPACT_ADDR 1
