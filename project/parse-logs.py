@@ -24,7 +24,7 @@ mpl.rcParams['boxplot.flierprops.markersize'] = 4
 mpl.rcParams['boxplot.flierprops.markeredgecolor'] ='gray'
 
 def parseNoiseData(log):
-    res = re.compile('.*?{asn-([a-f\d]+).([a-f\d]+) link-(\d+)-(\d+)-(\d+)-(\d+) [\s\d-]*ch-(\d+)\} RSSI sample: ([-\d]*)').match(log)
+    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} RSSI sample: ([-\d]*)').match(log)
     if res:
         #asn_ms = int(res.group(1), 16)
         asn_ls = int(res.group(2), 16)
@@ -35,7 +35,7 @@ def parseNoiseData(log):
             }
 
 def parseTxData(log):
-    res = re.compile('.*?{asn-([a-f\d]+).([a-f\d]+) link-(\d+)-(\d+)-(\d+)-(\d+) [\s\d-]*ch-(\d+)\} bc-[01]-0 tx').match(log)
+    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 tx').match(log)
     if res:
         #asn_ms = int(res.group(1), 16)
         asn_ls = int(res.group(2), 16)
@@ -46,7 +46,7 @@ def parseTxData(log):
 
 def parseRxData(log):
     #res = re.compile('.*?{asn-([a-f\d]+).([a-f\d]+) link-(\d+)-(\d+)-(\d+)-(\d+) [\s\d-]*ch-(\d+)\} bc-([01])-0 (\d*) rx LL-(\d*)->LL-NULL, len [-\d]*, seq [-\d]* rssi ([-\d]*)').match(log)
-    res = re.compile('.*?{asn-([a-f\d]+).([a-f\d]+) link-(\d+)-(\d+)-(\d+)-(\d+) [\s\d-]*ch-(\d+)\} bc-[01]-0 rx LL-(\d*)->LL-NULL, len [-\d]*, seq [-\d]*, rssi ([-\d]*)').match(log)
+    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 rx LL-(\d*)->LL-NULL, len +[-\d]*, seq +[-\d]*, rssi +([-\d]*)').match(log)
     if res:
         #asn_ms = int(res.group(1), 16)
         asn_ls = int(res.group(2), 16)
