@@ -98,12 +98,11 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
     while(1) {
       PROCESS_YIELD();
       if(ev == PROCESS_EVENT_TIMER) {
-          LOG_INFO("Sending seq %u\n", (unsigned)count);
-          NETSTACK_NETWORK.output(NULL);
-          count++;
-        }
-        etimer_reset(&et);
+        LOG_INFO("Sending seq %u\n", (unsigned)count);
+        NETSTACK_NETWORK.output(NULL);
+        count++;
       }
+      etimer_reset(&et);
     }
   }
 

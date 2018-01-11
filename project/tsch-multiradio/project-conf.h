@@ -54,6 +54,7 @@
 #define TSCH_CONF_SCANNING_RADIO cc1200_driver
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
 #define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
@@ -75,9 +76,9 @@
 #define TSCH_CONF_DESYNC_THRESHOLD (90 * CLOCK_SECOND)
 
 #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ \
-  16, 17, 18, 19, 26, 15, 25, 22, 23, 11, \
-  12, 13, 24, 14, 20, 21,  1, 32,  6,  5, \
-  10, 28, 30, 27, 29,  8,  0,  4, 31,  3, \
-   9,  7, 33,  2 }
+  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, \
+  21, 22, 23, 24, 25, 26,  0,  1,  2,  3, \
+   4,  5,  6,  7,  8,  9, 10, 27, 28, 29, \
+  30, 31, 32, 33 }
 
 #endif /* __PROJECT_CONF_H__ */
