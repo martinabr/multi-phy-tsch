@@ -657,6 +657,12 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   }
 #endif /* TSCH_INIT_SCHEDULE_FROM_EB */
 
+#if TSCH_CONF_SYNC_WITH_LOWER_NODE_ID
+    if(nodeid_from_linkaddr((linkaddr_t *)&frame.src_addr) >= node_id) {
+      return 0;
+    }
+#endif
+
   if(tsch_join_priority <= TSCH_MAX_JOIN_PRIORITY) {
     struct tsch_neighbor *n;
 
@@ -687,7 +693,7 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
 #endif
 
       tsch_association_count++;
-      LOG_INFO("association done (%u), sec %u, PAN ID %x, asn-%x.%lx, jp %u, timeslot id %u, hopping id %u, slotframe len %u with %u links, from ",
+      LOG_WARN("association done (%u), sec %u, PAN ID %x, asn-%x.%lx, jp %u, timeslot id %u, hopping id %u, slotframe len %u with %u links, from ",
              tsch_association_count,
              tsch_is_pan_secured,
              frame.src_pid,
@@ -696,8 +702,8 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
              ies.ie_channel_hopping_sequence_id,
              ies.ie_tsch_slotframe_and_link.slotframe_size,
              ies.ie_tsch_slotframe_and_link.num_links);
-      LOG_INFO_LLADDR((const linkaddr_t *)&frame.src_addr);
-      LOG_INFO_("\n");
+      LOG_WARN_LLADDR((const linkaddr_t *)&frame.src_addr);
+      LOG_WARN_("\n");
 
       return 1;
     }
@@ -852,7 +858,14 @@ PROCESS_THREAD(tsch_send_eb_process, ev, data)
   while(1) {
     unsigned long delay;
 
-    if(tsch_is_associated && tsch_current_eb_period > 0) {
+    int should_send_eb = tsch_is_associated && tsch_current_eb_period > 0;
+#if EB_ONLY_COORDINATOR
+    if(!tsch_is_coordinator) {
+      should_send_eb = 0;
+    }
+#endif
+
+    if(should_send_eb) {
       /* Enqueue EB only if there isn't already one in queue */
       if(tsch_queue_packet_count(&tsch_eb_address) == 0) {
         uint8_t hdr_len = 0;

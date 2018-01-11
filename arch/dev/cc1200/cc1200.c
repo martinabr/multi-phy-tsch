@@ -2340,15 +2340,14 @@ cc1200_rx_interrupt(void)
    * threshold is reached (GPIO2 rising edge)
    * or at the end of the packet (GPIO0 falling edge).
    */
-  static int is_receiving = 0;
+#if CC1200_USE_GPIO2
   int gpio2 = cc1200_arch_gpio2_read_pin();
-  if(is_receiving == 0 && gpio2 > 0) {
-    is_receiving = 1;
+  if(gpio2 > 0) {
     sfd_timestamp = RTIMER_NOW();
   }
-  if(gpio2 == 0) {
-    is_receiving = 0;
-  }
+#else
+  sfd_timestamp = RTIMER_NOW();
+#endif
 
   if(SPI_IS_LOCKED()) {
 
