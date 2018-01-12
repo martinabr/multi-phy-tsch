@@ -874,7 +874,7 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
 #if TSCH_CONF_SYNC_WITH_LOWER_NODE_ID
             is_time_source = nodeid_from_linkaddr(&source_address) < node_id;
 #else
-            is_time_source = current_neighbor != NULL && current_neighbor->is_time_source;
+            is_time_source = n != NULL && n->is_time_source;
 #endif
 
             if(is_time_source && (current_link->link_options & LINK_OPTION_TIME_KEEPING)) {
