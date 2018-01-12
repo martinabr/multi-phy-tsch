@@ -100,8 +100,8 @@ static rtimer_clock_t cc1200_1_2kbps_tsch_timing[tsch_ts_elements_count] = {
   US_TO_RTIMERTICKS_64(CC1200_TSCH_DEFAULT_TS_MAX_TX),
   US_TO_RTIMERTICKS_64(CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH),
 };
-  
- static const registerSetting_t preferredSettings[]= 
+
+ static const registerSetting_t preferredSettings[]=
  {
    {CC1200_IOCFG2,            0x06},
    {CC1200_SYNC3,             0x6F},
@@ -165,6 +165,8 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp = {
   .tx_rx_turnaround = (RTIMER_SECOND / 100),
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 6667usec per byte = 33335 usec */
   .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(37260)),
+  .delay_before_rx = (unsigned)US_TO_RTIMERTICKS(400),
+  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334), /* Two bytes */
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,
   .chan_spacing = RF_CFG_CHAN_SPACING,
   .min_channel = RF_CFG_MIN_CHANNEL,

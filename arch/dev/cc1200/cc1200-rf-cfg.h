@@ -71,6 +71,11 @@ typedef struct cc1200_rf_cfg {
   rtimer_clock_t tx_rx_turnaround;
   /* The delay between a call to transmit() and end of SFD */
   rtimer_clock_t delay_before_tx;
+  /* Delay between GO signal and start listening
+   * Measured 104us: between GO signal and start listening */
+  rtimer_clock_t delay_before_rx;
+  /* Delay between the SFD finishes arriving and it is detected in software */
+  rtimer_clock_t delay_before_detect;
   /* Base frequency in kHz */
   uint32_t chan_center_freq0;
   /* Channel spacing in Hz */

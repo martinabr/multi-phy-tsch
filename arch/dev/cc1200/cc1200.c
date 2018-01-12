@@ -1340,11 +1340,11 @@ get_value(radio_param_t param, radio_value_t *value)
     return RADIO_RESULT_OK;
 
   case RADIO_CONST_DELAY_BEFORE_RX:
-      *value = (radio_value_t)CC1200_DELAY_BEFORE_RX;
+      *value = (radio_value_t)CC1200_RF_CFG.delay_before_rx;
       return RADIO_RESULT_OK;
 
   case RADIO_CONST_DELAY_BEFORE_DETECT:
-      *value = (radio_value_t)CC1200_DELAY_BEFORE_DETECT;
+      *value = (radio_value_t)CC1200_RF_CFG.delay_before_detect;
       return RADIO_RESULT_OK;
 
   default:
@@ -2350,8 +2350,6 @@ cc1200_rx_interrupt(void)
    if(gpio2 == 0) {
      is_receiving = 0;
    }
-#else
-  sfd_timestamp = RTIMER_NOW();
 #endif
 
   if(SPI_IS_LOCKED()) {
