@@ -53,6 +53,7 @@
 #define NETSTACK_CONF_RADIO   cc1200_driver
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 #define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
@@ -63,6 +64,7 @@
 /* We will need more than 32 links */
 #define TSCH_SCHEDULE_CONF_MAX_LINKS 60
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
+#define EB_ONLY_COORDINATOR 0
 
 /* EB and KA */
 #define TSCH_CONF_EB_PERIOD (4 * CLOCK_SECOND)
