@@ -51,10 +51,12 @@
 
 /* Use CC1200 */
 #define NETSTACK_CONF_RADIO   cc1200_driver
+#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp /* sp: short packets */
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_8kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
-#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
+//#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */

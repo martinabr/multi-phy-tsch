@@ -56,7 +56,7 @@
 /* The RSSI offset in dBm */
 #define RF_CFG_RSSI_OFFSET              (-81)
 /*---------------------------------------------------------------------------*/
-static const char rf_cfg_descriptor[] = "802.15.4g 863-870MHz MR-FSK mode #1";
+static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 250 kbps";
 /*---------------------------------------------------------------------------*/
 
 /* 1 byte time: 160 usec */
