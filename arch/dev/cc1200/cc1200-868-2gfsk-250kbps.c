@@ -94,7 +94,7 @@ static rtimer_clock_t cc1200_50kbps_tsch_timing[tsch_ts_elements_count] = {
   US_TO_RTIMERTICKS(CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH),
 };
 
-/* 
+/*
  * Register settings exported from SmartRF Studio using the standard template
  * "trxEB RF Settings Performance Line".
  */
@@ -114,7 +114,7 @@ static rtimer_clock_t cc1200_50kbps_tsch_timing[tsch_ts_elements_count] = {
 // RX filter BW = 104.166667
 
 
-static const registerSetting_t preferredSettings[]= 
+static const registerSetting_t preferredSettings[]=
 {
   {CC1200_IOCFG2,            0x06},
   {CC1200_SYNC3,             0x6F},
@@ -178,7 +178,7 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps = {
   .tx_pkt_lifetime = (RTIMER_SECOND / 20),
   .tx_rx_turnaround = (RTIMER_SECOND / 100),
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 32usec per byte = 160 usec */
-  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(960)),
+  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(700)),
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,
   .chan_spacing = RF_CFG_CHAN_SPACING,
   .min_channel = RF_CFG_MIN_CHANNEL,
@@ -186,7 +186,7 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps = {
   .max_txpower = RF_CFG_MAX_TXPOWER,
   .cca_threshold = RF_CFG_CCA_THRESHOLD,
   .rssi_offset = RF_CFG_RSSI_OFFSET,
-  .bitrate = 50000,
+  .bitrate = 250000,
   .tsch_timing = cc1200_50kbps_tsch_timing,
 };
 /*---------------------------------------------------------------------------*/
