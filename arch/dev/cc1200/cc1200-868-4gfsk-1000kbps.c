@@ -79,7 +79,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-FSK 1.2 kbps";
 #define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH  29510
 
 /* TSCH timeslot timing (in rtimer ticks) */
-static rtimer_clock_t cc1200_1_2kbps_tsch_timing[tsch_ts_elements_count] = {
+static rtimer_clock_t cc1200_1000kbps_tsch_timing[tsch_ts_elements_count] = {
   US_TO_RTIMERTICKS_64(CC1200_TSCH_DEFAULT_TS_CCA_OFFSET),
   US_TO_RTIMERTICKS_64(CC1200_TSCH_DEFAULT_TS_CCA),
   US_TO_RTIMERTICKS_64(CC1200_TSCH_DEFAULT_TS_TX_OFFSET),
@@ -161,6 +161,6 @@ const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps = {
   .cca_threshold = RF_CFG_CCA_THRESHOLD,
   .rssi_offset = RF_CFG_RSSI_OFFSET,
   .bitrate = 1000000,
-  .tsch_timing = cc1200_1_2kbps_tsch_timing,
+  .tsch_timing = cc1200_1000kbps_tsch_timing,
 };
 /*---------------------------------------------------------------------------*/
