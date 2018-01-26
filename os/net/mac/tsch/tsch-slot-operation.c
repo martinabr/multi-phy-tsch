@@ -66,6 +66,11 @@
 #include "dev/multiradio.h"
 #include "deployment.h"
 
+#include "cc1200-const.h"
+#include "cc1200-conf.h"
+#include "cc1200-arch.h"
+#include "cc1200-rf-cfg.h"
+
 #include "sys/log.h"
 /* TSCH debug macros, i.e. to set LEDs or GPIOs on various TSCH
  * timeslot events */
@@ -974,12 +979,24 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         struct tsch_slotframe *sf = tsch_schedule_get_slotframe_by_handle(current_link->slotframe_handle);
         multiradio_select(sf->radio);
 #endif
+        /* Hop channel */
+        current_channel = tsch_calculate_channel(&tsch_current_asn, current_link->channel_offset);
+#if WITH_TSCH_CC1200_RECONF
+        void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
+         extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+        extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+        if(current_channel % 2 == 0) {
+          cc1200_reconfigure(&cc1200_868_2gfsk_50kbps_802154g, current_channel);
+        } else {
+          cc1200_reconfigure(&cc1200_868_4gfsk_1000kbps, current_channel);
+        }
+#else
+        NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, current_channel);
+#endif
         if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
           tsch_timing = tsch_default_timing;
         }
-        /* Hop channel */
-        current_channel = tsch_calculate_channel(&tsch_current_asn, current_link->channel_offset);
-        NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, current_channel);
+
         /* Turn the radio on already here if configured so; necessary for radios with slow startup */
         tsch_radio_on(TSCH_RADIO_CMD_ON_START_OF_TIMESLOT);
         /* Decide whether it is a TX/RX/IDLE or OFF slot */

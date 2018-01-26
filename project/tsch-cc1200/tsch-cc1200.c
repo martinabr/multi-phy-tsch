@@ -57,7 +57,7 @@
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-#define LOOP_INTERVAL       (8*CLOCK_SECOND)
+#define LOOP_INTERVAL       (9*CLOCK_SECOND)
 #define TSCH_COORDINATOR_ID 1
 
 /*---------------------------------------------------------------------------*/

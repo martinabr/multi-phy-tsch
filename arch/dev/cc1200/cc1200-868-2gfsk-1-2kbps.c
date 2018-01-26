@@ -66,7 +66,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 1.2 kbps";
 
 #define CC1200_TSCH_DEFAULT_TS_CCA_OFFSET        1800
 #define CC1200_TSCH_DEFAULT_TS_CCA                128
-#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET        55000 /* Must be greater than preamble */
+#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET        (55000+(TSCH_WITH_CC1200_RECONF ? 1250 : 0)) /* Must be greater than preamble */
 #define CC1200_TSCH_DEFAULT_TS_RX_OFFSET          (CC1200_TSCH_DEFAULT_TS_TX_OFFSET - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_RX_ACK_DELAY       (CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_ACK_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY     55000 /* Must be greater than preamble */
@@ -76,7 +76,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 1.2 kbps";
 #define CC1200_TSCH_DEFAULT_TS_MAX_ACK          73334 /* 7+1+3 bytes*/
 #define CC1200_TSCH_DEFAULT_TS_MAX_TX          866667 /* 126+1+3 bytes */
 /* TSCH_DEFAULT_TS_TX_OFFSET + TSCH_DEFAULT_TS_MAX_TX + TSCH_DEFAULT_TS_TX_ACK_DELAY + TSCH_DEFAULT_TS_MAX_ACK + 550 usec slack */
-#define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH     1050551
+#define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH     (1050551+(TSCH_WITH_CC1200_RECONF ? 1250 : 0))
 
 /* TSCH timeslot timing (in rtimer ticks) */
 static rtimer_clock_t cc1200_1_2kbps_tsch_timing[tsch_ts_elements_count] = {

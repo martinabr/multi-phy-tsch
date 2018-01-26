@@ -48,6 +48,11 @@
 #include "net/packetbuf.h"
 #include "deployment/deployment.h"
 
+#include "cc1200-const.h"
+#include "cc1200-conf.h"
+#include "cc1200-arch.h"
+#include "cc1200-rf-cfg.h"
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -93,15 +98,22 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
-  if(node_id == 1) {
+  void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
+  extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+static rtimer_clock_t t0, t1;
+t0 = RTIMER_NOW();
+  cc1200_reconfigure(&cc1200_868_4gfsk_1000kbps, 0);
+t1 = RTIMER_NOW();
+printf("Time delta: %lu %u\n", t1-t0, RTIMER_SECOND);
+  NETSTACK_RADIO.on();
+
+  if(linkaddr_node_addr.u16[3] == 0xc40f) {
     etimer_set(&et, LOOP_INTERVAL);
     while(1) {
-      PROCESS_YIELD();
-      if(ev == PROCESS_EVENT_TIMER) {
-        LOG_INFO("Sending seq %u\n", (unsigned)count);
-        NETSTACK_NETWORK.output(NULL);
-        count++;
-      }
+      PROCESS_WAIT_UNTIL(etimer_expired(&et));
+      LOG_INFO("Sending seq %u\n", (unsigned)count);
+      NETSTACK_NETWORK.output(NULL);
+      count++;
       etimer_reset(&et);
     }
   }

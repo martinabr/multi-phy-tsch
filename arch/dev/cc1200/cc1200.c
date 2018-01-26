@@ -523,7 +523,7 @@ write_reg_settings(const registerSetting_t *reg_settings,
                    uint16_t sizeof_reg_settings);
 /* Configure the radio (write basic configuration). */
 static void
-configure(void);
+configure(int do_reset);
 /* Return the radio's state. */
 static uint8_t
 state(void);
@@ -674,10 +674,7 @@ pollhandler(void)
 static int
 init(void)
 {
-
   INFO("RF: Init (%s)\n", current_rf_config->cfg_descriptor);
-
-  TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_divisor, current_rf_config->max_channel - current_rf_config->min_channel + 1);
 
   if(!(rf_flags & RF_INITIALIZED)) {
 
@@ -690,21 +687,13 @@ init(void)
     SETUP_GPIO_INTERRUPTS();
 
     /* Write initial configuration */
-    configure();
+    configure(1);
 
     /* Enable address filtering + auto ack */
     rx_mode_value = (RADIO_RX_MODE_AUTOACK | RADIO_RX_MODE_ADDRESS_FILTER);
 
     /* Enable CCA */
     tx_mode_value = (RADIO_TX_MODE_SEND_ON_CCA);
-
-    /* Set output power */
-    new_txpower = current_rf_config->max_txpower;
-    update_txpower(new_txpower);
-
-    /* Adjust CAA threshold */
-    new_cca_threshold = current_rf_config->cca_threshold;
-    update_cca_threshold(new_cca_threshold);
 
     process_start(&cc1200_process, NULL);
 
@@ -1626,7 +1615,10 @@ cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel)
 {
   current_rf_config = config;
   LOCK_SPI();
-  configure();
+  /* Rewrite configuration */
+  configure(0);
+  /* We are on + initialized at this point */
+  rf_flags |= (RF_INITIALIZED + RF_ON);
   RELEASE_SPI();
   /* Set channel. This will also force initial calibration! */
   set_channel(channel);
@@ -1637,7 +1629,7 @@ cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel)
 /*---------------------------------------------------------------------------*/
 /* Configure the radio (write basic configuration). */
 static void
-configure(void)
+configure(int do_reset)
 {
 
   uint8_t reg;
@@ -1645,11 +1637,15 @@ configure(void)
   uint32_t freq;
 #endif
 
-  /*
-   * As we only write registers which are different from the chip's reset
-   * state, let's assure that the chip is in a clean state
-   */
-  reset();
+  TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_divisor, current_rf_config->max_channel - current_rf_config->min_channel + 1);
+
+  if(do_reset) {
+    /*
+     * As we only write registers which are different from the chip's reset
+     * state, let's assure that the chip is in a clean state
+     */
+    reset();
+  }
 
   /* Write the configuration as exported from SmartRF Studio */
   write_reg_settings(current_rf_config->register_settings,
@@ -1841,6 +1837,14 @@ configure(void)
   /* FIFO threshold */
   single_write(CC1200_FIFO_CFG, FIFO_THRESHOLD);
 #endif
+
+  /* Set output power */
+  new_txpower = current_rf_config->max_txpower;
+  update_txpower(new_txpower);
+
+  /* Adjust CAA threshold */
+  new_cca_threshold = current_rf_config->cca_threshold;
+  update_cca_threshold(new_cca_threshold);
 
 }
 /*---------------------------------------------------------------------------*/
@@ -2212,7 +2216,7 @@ set_channel(uint8_t channel)
 
   idle();
 
-  freq = calculate_freq(channel - CC1200_RF_CFG.min_channel);
+  freq = calculate_freq(channel - current_rf_config->min_channel);
   single_write(CC1200_FREQ0, ((uint8_t *)&freq)[0]);
   single_write(CC1200_FREQ1, ((uint8_t *)&freq)[1]);
   single_write(CC1200_FREQ2, ((uint8_t *)&freq)[2]);
