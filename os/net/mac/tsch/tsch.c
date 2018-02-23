@@ -74,6 +74,9 @@
 #include "net/mac/tsch/sixtop/sixtop.h"
 #endif
 
+#include "cc1200-conf.h"
+#include "cc1200-rf-cfg.h"
+
 #if FRAME802154_VERSION < FRAME802154_IEEE802154_2015
 #error TSCH: FRAME802154_VERSION must be at least FRAME802154_IEEE802154_2015
 #endif
@@ -245,6 +248,10 @@ tsch_reset(void)
 #if TSCH_WITH_MULTIRADIO
   multiradio_select(&TSCH_CONF_SCANNING_RADIO);
 #endif /* TSCH_WITH_MULTIRADIO */
+#if TSCH_WITH_CC1200_RECONF
+  extern const cc1200_rf_cfg_t CC1200_RF_CFG;
+  cc1200_reconfigure(&CC1200_RF_CFG, 0);
+#endif
   if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
     for(i = 0; i < tsch_ts_elements_count; i++) {
       tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);

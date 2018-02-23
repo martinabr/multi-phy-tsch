@@ -100,4 +100,7 @@ typedef struct cc1200_rf_cfg {
   rtimer_clock_t *tsch_timing;
 } cc1200_rf_cfg_t;
 /*---------------------------------------------------------------------------*/
+
+void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
+
 #endif /* CC1200_RF_CFG_H  */

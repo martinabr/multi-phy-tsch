@@ -66,9 +66,7 @@
 #include "dev/multiradio.h"
 #include "deployment.h"
 
-#include "cc1200-const.h"
 #include "cc1200-conf.h"
-#include "cc1200-arch.h"
 #include "cc1200-rf-cfg.h"
 
 #include "sys/log.h"
@@ -981,21 +979,16 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       is_active_slot = current_packet != NULL || (current_link->link_options & LINK_OPTION_RX);
       if(is_active_slot) {
         /* Select radio and timeslot timing */
-#if TSCH_WITH_MULTIRADIO
+#if TSCH_WITH_MULTIRADIO || TSCH_WITH_CC1200_RECONF
         struct tsch_slotframe *sf = tsch_schedule_get_slotframe_by_handle(current_link->slotframe_handle);
+#endif
+#if TSCH_WITH_MULTIRADIO
         multiradio_select(sf->radio);
 #endif
         /* Hop channel */
         current_channel = tsch_calculate_channel(&tsch_current_asn, current_link->channel_offset);
-#if WITH_TSCH_CC1200_RECONF
-        void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
-         extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
-        extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
-        if(current_channel % 2 == 0) {
-          cc1200_reconfigure(&cc1200_868_2gfsk_50kbps_802154g, current_channel);
-        } else {
-          cc1200_reconfigure(&cc1200_868_4gfsk_1000kbps, current_channel);
-        }
+#if TSCH_WITH_CC1200_RECONF
+        cc1200_reconfigure(sf->cc1200_config, current_channel);
 #else
         NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, current_channel);
 #endif
