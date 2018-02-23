@@ -78,6 +78,12 @@ static const struct id_mac id_mac_list[] = {
     { 0, {{0}}}
 };
 
+// static const struct id_mac id_mac_list[] = {
+//     { 1, {{0x00,0x12,0x4b,0x00,0x14,0xb5,0xde,0xef}}},
+//     { 2, {{0x00,0x12,0x4b,0x00,0x14,0xb5,0xde,0xd4}}},
+//     { 0, {{0}}}
+// };
+
 /*---------------------------------------------------------------------------*/
 void
 deployment_init(void)
