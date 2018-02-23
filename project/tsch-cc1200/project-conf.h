@@ -76,10 +76,6 @@
 #define TSCH_CONF_MAX_KEEPALIVE_TIMEOUT 0
 #define TSCH_CONF_DESYNC_THRESHOLD (90 * CLOCK_SECOND)
 
-#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ \
-  16, 17, 18, 19, 26, 15, 25, 22, 23, 11, \
-  12, 13, 24, 14, 20, 21,  1, 32,  6,  5, \
-  10, 28, 30, 27, 29,  8,  0,  4, 31,  3, \
-   9,  7, 33,  2 }
+#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 0, 1 }
 
 #endif /* __PROJECT_CONF_H__ */

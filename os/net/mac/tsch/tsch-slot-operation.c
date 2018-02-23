@@ -258,15 +258,21 @@ uint8_t
 tsch_calculate_channel(struct tsch_asn_t *asn, uint8_t channel_offset)
 {
   struct tsch_asn_divisor_t radio_divisor;
+  struct tsch_asn_divisor_t *divisor;
   uint16_t index_of_0;
   uint16_t index_of_offset;
+
+  /* Use full hopping sequence unless the radio specifies a shorter seqlen */
+  divisor = &tsch_hopping_sequence_length;
   if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_HOPPING_SEQUENCE_DIVISOR, &radio_divisor, sizeof(struct tsch_asn_divisor_t *)) == RADIO_RESULT_OK) {
-    index_of_0 = TSCH_ASN_MOD(*asn, radio_divisor);
-    index_of_offset = (index_of_0 + channel_offset) % radio_divisor.val;
-  } else {
-    index_of_0 = TSCH_ASN_MOD(*asn, tsch_hopping_sequence_length);
-    index_of_offset = (index_of_0 + channel_offset) % tsch_hopping_sequence_length.val;
+    /* Select shorter one */
+    if(radio_divisor.val < tsch_hopping_sequence_length.val) {
+      divisor = &radio_divisor;
+    }
   }
+
+  index_of_0 = TSCH_ASN_MOD(*asn, *divisor);
+  index_of_offset = (index_of_0 + channel_offset) % divisor->val;
   return tsch_hopping_sequence[index_of_offset];
 }
 
