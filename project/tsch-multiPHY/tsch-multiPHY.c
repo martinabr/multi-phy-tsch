@@ -63,7 +63,13 @@
 
 #include "cc1200-rf-cfg.h"
 extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_8kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+
+#define NNODES    2
+#define SFLEN     17
 
 /*---------------------------------------------------------------------------*/
 //static struct etimer et;
@@ -81,64 +87,58 @@ input_callback(const void *data, uint16_t len,
 /*---------------------------------------------------------------------------*/
 PROCESS(cc1200_demo_process, "cc1200 demo process");
 AUTOSTART_PROCESSES(&cc1200_demo_process);
+
+static void
+do_schedule(int handle, const cc1200_rf_cfg_t *cfg) {
+  int i;
+  struct tsch_slotframe *sf;
+  int base = (handle*(NNODES+1));
+
+  sf = tsch_schedule_add_slotframe(handle, SFLEN);
+  sf->cc1200_config = cfg;
+
+  tsch_schedule_add_link(sf,
+      LINK_OPTION_TX,
+      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+      base + node_id - 1, 0);
+  // tsch_schedule_add_link(sf,
+  //    LINK_OPTION_SAMPLE_RSSI,
+  //    LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+  //    base + NNODES, 0);
+  for(i = 0; i < NNODES; i++) {
+    if(i != node_id - 1) {
+      tsch_schedule_add_link(sf,
+          LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
+          LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+          base + i, 0);
+    }
+  }
+}
+
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
-  static uint32_t count = 0;
-  struct tsch_slotframe *sf_cc1200_50;
-  struct tsch_slotframe *sf_cc1200_1000;
-  int i;
+  // static uint32_t count = 0;
 
   PROCESS_BEGIN();
 
   /* Initialize NullNet */
-  nullnet_buf = (uint8_t *)&count;
-  nullnet_len = sizeof(count) + 8; /* Add 8 bytes to match the EB len*/
-  nullnet_set_input_callback(input_callback);
+  // nullnet_buf = (uint8_t *)&count;
+  // nullnet_len = sizeof(count) + 8; /* Add 8 bytes to match the EB len*/
+  // nullnet_set_input_callback(input_callback);
 
-
-  sf_cc1200_50 = tsch_schedule_add_slotframe(0, 53);
-  sf_cc1200_50->cc1200_config = &cc1200_868_2gfsk_50kbps_802154g;
-
-  sf_cc1200_1000 = tsch_schedule_add_slotframe(1, 53);
-  sf_cc1200_1000->cc1200_config = &cc1200_868_4gfsk_1000kbps;
-
-  tsch_schedule_add_link(sf_cc1200_50,
-      LINK_OPTION_TX,
-      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      node_id - 1, 0);
-  // tsch_schedule_add_link(sf_cc1200_50,
-  //     LINK_OPTION_SAMPLE_RSSI,
-  //     LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-  //     25, 0);
-  for(i = 0; i < 25; i++) {
-    if(i != node_id - 1) {
-      tsch_schedule_add_link(sf_cc1200_50,
-          LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
-          LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-          i, 0);
-    }
-  }
-  tsch_schedule_add_link(sf_cc1200_1000,
-      LINK_OPTION_TX,
-      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      26 + node_id - 1, 0);
-  // tsch_schedule_add_link(sf_cc1200_1000,
-  //     LINK_OPTION_SAMPLE_RSSI,
-  //     LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-  //     26 + 25, 0);
-  for(i = 0; i < 25; i++) {
-    if(i != node_id - 1) {
-      tsch_schedule_add_link(sf_cc1200_1000,
-          LINK_OPTION_RX,
-          LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-          26 + i, 0);
-    }
-  }
+  do_schedule(0, &cc1200_868_2gfsk_1_2kbps_sp);
+  do_schedule(1, &cc1200_868_2gfsk_8kbps);
+  do_schedule(2, &cc1200_868_2gfsk_50kbps_802154g);
+  do_schedule(3, &cc1200_868_2gfsk_250kbps);
+  do_schedule(4, &cc1200_868_4gfsk_1000kbps);
 
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
   NETSTACK_MAC.on();
+
+// void tsch_schedule_print(void);
+// tsch_schedule_print();
 
   // etimer_set(&et, LOOP_INTERVAL);
   // while(1) {

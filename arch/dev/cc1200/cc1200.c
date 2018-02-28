@@ -1616,7 +1616,7 @@ cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel)
   current_rf_config = config;
   LOCK_SPI();
   /* Rewrite configuration */
-  configure(0);
+  configure(1);
   /* We are on + initialized at this point */
   rf_flags |= (RF_INITIALIZED + RF_ON);
   RELEASE_SPI();

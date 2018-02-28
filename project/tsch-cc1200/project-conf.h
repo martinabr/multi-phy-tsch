@@ -59,7 +59,7 @@
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
-#define TSCH_WITH_CC1200_RECONF 1
+#define TSCH_WITH_CC1200_RECONF 1600
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 /* No 6TiSCH minimal schedule */

@@ -63,6 +63,11 @@
 
 #define LOOP_INTERVAL       (CLOCK_SECOND)
 
+void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
+extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
 /*---------------------------------------------------------------------------*/
@@ -98,16 +103,15 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   NETSTACK_RADIO.set_value(RADIO_PARAM_TX_MODE, radio_tx_mode);
   NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CUSTOM_CHANNEL);
 
-  void cc1200_reconfigure(const cc1200_rf_cfg_t *config, uint8_t channel);
-  extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
 static rtimer_clock_t t0, t1;
 t0 = RTIMER_NOW();
   cc1200_reconfigure(&cc1200_868_4gfsk_1000kbps, 0);
 t1 = RTIMER_NOW();
 printf("Time delta: %lu %u\n", t1-t0, RTIMER_SECOND);
+
   NETSTACK_RADIO.on();
 
-  if(linkaddr_node_addr.u16[3] == 0xc40f) {
+  if(node_id == 1) {
     etimer_set(&et, LOOP_INTERVAL);
     while(1) {
       PROCESS_WAIT_UNTIL(etimer_expired(&et));

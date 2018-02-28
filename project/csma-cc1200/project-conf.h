@@ -53,7 +53,10 @@
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
-//#define LOG_CONF_WITH_COMPACT_ADDR 1
+
+#define LOG_CONF_WITH_COMPACT_ADDR 1
+/* Make room in timeslot template for radio reconfig */
+#define TSCH_WITH_CC1200_RECONF 1600
 
 #endif /* PROJECT_CONF_H_ */
 

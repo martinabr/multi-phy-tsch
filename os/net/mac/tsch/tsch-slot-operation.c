@@ -990,6 +990,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         current_channel = tsch_calculate_channel(&tsch_current_asn, current_link->channel_offset);
 #if TSCH_WITH_CC1200_RECONF
         cc1200_reconfigure(sf->cc1200_config, current_channel);
+        //NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, current_channel);
 #else
         NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, current_channel);
 #endif
