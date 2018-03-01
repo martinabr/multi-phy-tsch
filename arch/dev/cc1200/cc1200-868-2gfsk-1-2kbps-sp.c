@@ -161,7 +161,7 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp = {
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 6667usec per byte = 33335 usec */
   .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(49700)),
   .delay_before_rx = (unsigned)US_TO_RTIMERTICKS(400),
-  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334-1800), /* Two bytes.
+  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334-1800+335), /* Two bytes.
   The reason why an offset of -1800 usec is need is yet to be figured out.. */
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,
   .chan_spacing = RF_CFG_CHAN_SPACING,

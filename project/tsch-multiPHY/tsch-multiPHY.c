@@ -101,14 +101,14 @@ do_schedule(int handle, const cc1200_rf_cfg_t *cfg) {
       LINK_OPTION_TX,
       LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
       base + node_id - 1, 0);
-  // tsch_schedule_add_link(sf,
-  //    LINK_OPTION_SAMPLE_RSSI,
-  //    LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-  //    base + NNODES, 0);
+  tsch_schedule_add_link(sf,
+      LINK_OPTION_SAMPLE_RSSI,
+      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+      base + NNODES, 0);
   for(i = 0; i < NNODES; i++) {
     if(i != node_id - 1) {
       tsch_schedule_add_link(sf,
-          LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
+          (handle == 0 ? LINK_OPTION_TIME_KEEPING : 0) | LINK_OPTION_RX,
           LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
           base + i, 0);
     }
