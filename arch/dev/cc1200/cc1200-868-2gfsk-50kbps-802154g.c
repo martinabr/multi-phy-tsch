@@ -66,7 +66,7 @@ static const char rf_cfg_descriptor[] = "802.15.4g 863-870MHz MR-FSK mode #1";
 
 /* 1 byte time: 160 usec */
 #define CC1200_TSCH_PREAMBLE_LENGTH               800 /* 5 bytes */
-#define CC1200_TSCH_CONF_RX_WAIT                 1000
+#define CC1200_TSCH_CONF_RX_WAIT                 2000
 #define CC1200_TSCH_CONF_RX_ACK_WAIT              150
 
 #define CC1200_TSCH_DEFAULT_TS_CCA_OFFSET        1800

@@ -61,7 +61,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 250 kbps";
 
 /* 1 byte time: 160 usec */
 #define CC1200_TSCH_PREAMBLE_LENGTH               800 /* 5 bytes */
-#define CC1200_TSCH_CONF_RX_WAIT                 1000
+#define CC1200_TSCH_CONF_RX_WAIT                 2000
 #define CC1200_TSCH_CONF_RX_ACK_WAIT              150
 
 #define CC1200_TSCH_DEFAULT_TS_CCA_OFFSET        1800

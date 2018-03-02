@@ -70,8 +70,8 @@ extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
 extern const struct radio_driver cc1200_driver;
 extern const struct radio_driver cc2538_rf_driver;
 
-#define NNODES    2
-#define SFLEN     19
+#define NNODES    25
+#define SFLEN     157
 
 #if (NNODES+1)*6 > SFLEN
 #error SFLEN too short
@@ -115,7 +115,8 @@ do_schedule(int handle, const struct radio_driver *radio, const cc1200_rf_cfg_t 
   for(i = 0; i < NNODES; i++) {
     if(i != node_id - 1) {
       tsch_schedule_add_link(sf,
-          (handle == 0 ? LINK_OPTION_TIME_KEEPING : 0) | LINK_OPTION_RX,
+          //(handle == 0 ? LINK_OPTION_TIME_KEEPING : 0) | LINK_OPTION_RX,
+          LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
           LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
           base + i, 0);
     }
