@@ -47,6 +47,8 @@
 #include "net/mac/tsch/tsch-slot-operation.h"
 #include "net/linkaddr.h"
 
+#include "cc1200-rf-cfg.h"
+
 /******** Configuration *******/
 
 /* Initializes TSCH with a 6TiSCH minimal schedule */
@@ -129,7 +131,7 @@ struct tsch_slotframe {
   /* The radio this slotframe is attached to */
   const struct radio_driver *radio;
   /* The radio configuration for this slotframe */
-  const void *cc1200_config;
+  const cc1200_rf_cfg_t *cc1200_config;
   /* The timeslot timing for slots in this slotframe */
   rtimer_clock_t *tsch_timing;
   /* List of links belonging to this slotframe */

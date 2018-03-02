@@ -255,6 +255,9 @@ tsch_release_lock(void)
 uint8_t
 tsch_calculate_channel(struct tsch_asn_t *asn, uint8_t channel_offset)
 {
+#if TSCH_CONF_NO_HOPPING_SEQUENCE
+  return asn->ls4b + channel_offset;
+#else
   struct tsch_asn_divisor_t radio_divisor;
   struct tsch_asn_divisor_t *divisor;
   uint16_t index_of_0;
@@ -272,6 +275,7 @@ tsch_calculate_channel(struct tsch_asn_t *asn, uint8_t channel_offset)
   index_of_0 = TSCH_ASN_MOD(*asn, *divisor);
   index_of_offset = (index_of_0 + channel_offset) % divisor->val;
   return tsch_hopping_sequence[index_of_offset];
+#endif
 }
 
 /*---------------------------------------------------------------------------*/
