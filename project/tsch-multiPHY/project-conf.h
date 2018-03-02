@@ -64,13 +64,13 @@
 /* Make room in timeslot template for radio reconfig */
 #define TSCH_WITH_CC1200_RECONF 1600
 /* Tell TSCH to use multiple radios */
-//#define TSCH_WITH_MULTIRADIO 1
+#define TSCH_WITH_MULTIRADIO 1
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 /* No 6TiSCH minimal schedule */
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0
 /* We will need more than 32 links */
-#define TSCH_SCHEDULE_CONF_MAX_LINKS 150
+#define TSCH_SCHEDULE_CONF_MAX_LINKS 180
 #define TSCH_SCHEDULE_CONF_MAX_SLOTFRAMES 6
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
 #define EB_ONLY_COORDINATOR 0

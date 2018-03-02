@@ -67,9 +67,15 @@ extern const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_8kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+extern const struct radio_driver cc1200_driver;
+extern const struct radio_driver cc2538_rf_driver;
 
 #define NNODES    2
-#define SFLEN     17
+#define SFLEN     19
+
+#if (NNODES+1)*6 > SFLEN
+#error SFLEN too short
+#endif
 
 /*---------------------------------------------------------------------------*/
 //static struct etimer et;
@@ -127,11 +133,12 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   // nullnet_len = sizeof(count) + 8; /* Add 8 bytes to match the EB len*/
   // nullnet_set_input_callback(input_callback);
 
-  do_schedule(0, &cc1200_868_2gfsk_1_2kbps_sp);
-  do_schedule(1, &cc1200_868_2gfsk_8kbps);
-  do_schedule(2, &cc1200_868_2gfsk_50kbps_802154g);
-  do_schedule(3, &cc1200_868_2gfsk_250kbps);
-  do_schedule(4, &cc1200_868_4gfsk_1000kbps);
+  do_schedule(0, &cc1200_driver, &cc1200_868_2gfsk_1_2kbps_sp);
+  do_schedule(1, &cc1200_driver, &cc1200_868_2gfsk_8kbps);
+  do_schedule(2, &cc1200_driver, &cc1200_868_2gfsk_50kbps_802154g);
+  do_schedule(3, &cc1200_driver, &cc1200_868_2gfsk_250kbps);
+  do_schedule(4, &cc1200_driver, &cc1200_868_4gfsk_1000kbps);
+  do_schedule(5, &cc2538_rf_driver, NULL);
 
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
