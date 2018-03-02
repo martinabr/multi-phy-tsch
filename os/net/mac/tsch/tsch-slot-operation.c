@@ -981,7 +981,8 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         current_link = backup_link;
         current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
       }
-      is_active_slot = current_packet != NULL || (current_link->link_options & LINK_OPTION_RX);
+      is_active_slot = current_packet != NULL || (current_link->link_options & LINK_OPTION_RX)
+                        || current_link->link_options & LINK_OPTION_SAMPLE_RSSI;
       if(is_active_slot) {
         /* Select radio and timeslot timing */
 #if TSCH_WITH_MULTIRADIO || TSCH_WITH_CC1200_RECONF
@@ -1008,9 +1009,23 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
         /* Turn the radio on already here if configured so; necessary for radios with slow startup */
         tsch_radio_on(TSCH_RADIO_CMD_ON_START_OF_TIMESLOT);
+
+
+        if(current_link->link_options & LINK_OPTION_SAMPLE_RSSI) {
+          radio_value_t rssi_value;
+          int16_t rssi;
+          NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_value);
+          tsch_radio_off(TSCH_RADIO_CMD_ON_START_OF_TIMESLOT);
+          rssi = (int16_t)rssi_value;
+          TSCH_LOG_ADD(tsch_log_message,
+                snprintf(log->message, sizeof(log->message),
+                    "RSSI sample: %d", rssi);
+          );
+          (void)rssi;
+        }
         /* Decide whether it is a TX/RX/IDLE or OFF slot */
         /* Actual slot operation */
-        if(current_packet != NULL) {
+        else if(current_packet != NULL) {
           /* We have something to transmit, do the following:
            * 1. send
            * 2. update_backoff_state(current_neighbor)
@@ -1023,18 +1038,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
           static struct pt slot_rx_pt;
           PT_SPAWN(&slot_operation_pt, &slot_rx_pt, tsch_rx_slot(&slot_rx_pt, t));
         }
-      } else if(current_link->link_options & LINK_OPTION_SAMPLE_RSSI) {
-        radio_value_t rssi_value;
-        int16_t rssi;
-        tsch_radio_on(TSCH_RADIO_CMD_ON_WITHIN_TIMESLOT);
-        NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_value);
-        tsch_radio_off(TSCH_RADIO_CMD_ON_WITHIN_TIMESLOT);
-        rssi = (int16_t)rssi_value;
-        TSCH_LOG_ADD(tsch_log_message,
-              snprintf(log->message, sizeof(log->message),
-                  "RSSI sample: %d", rssi);
-        );
-        (void)rssi;
       }
       TSCH_DEBUG_SLOT_END();
     }
