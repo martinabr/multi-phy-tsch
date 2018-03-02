@@ -54,7 +54,7 @@
 /* The carrier sense level used for CCA in dBm */
 #define RF_CFG_CCA_THRESHOLD            (-91)
 /* The RSSI offset in dBm */
-#define RF_CFG_RSSI_OFFSET              (-99)
+#define RF_CFG_RSSI_OFFSET              (-81)
 /*---------------------------------------------------------------------------*/
 static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 8 kbps";
 /*---------------------------------------------------------------------------*/
