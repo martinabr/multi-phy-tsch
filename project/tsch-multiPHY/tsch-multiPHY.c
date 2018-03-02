@@ -95,12 +95,13 @@ PROCESS(cc1200_demo_process, "cc1200 demo process");
 AUTOSTART_PROCESSES(&cc1200_demo_process);
 
 static void
-do_schedule(int handle, const cc1200_rf_cfg_t *cfg) {
+do_schedule(int handle, const struct radio_driver *radio, const cc1200_rf_cfg_t *cfg) {
   int i;
   struct tsch_slotframe *sf;
   int base = (handle*(NNODES+1));
 
   sf = tsch_schedule_add_slotframe(handle, SFLEN);
+  sf->radio = radio;
   sf->cc1200_config = cfg;
 
   tsch_schedule_add_link(sf,
