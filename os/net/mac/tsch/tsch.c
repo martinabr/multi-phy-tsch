@@ -76,6 +76,9 @@
 
 #include "cc1200-conf.h"
 #include "cc1200-rf-cfg.h"
+extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
 
 #if FRAME802154_VERSION < FRAME802154_IEEE802154_2015
 #error TSCH: FRAME802154_VERSION must be at least FRAME802154_IEEE802154_2015
@@ -249,18 +252,23 @@ tsch_reset(void)
   multiradio_select(&TSCH_CONF_SCANNING_RADIO);
 #endif /* TSCH_WITH_MULTIRADIO */
 #if TSCH_WITH_CC1200_RECONF
-  extern const cc1200_rf_cfg_t CC1200_RF_CFG;
-  cc1200_reconfigure(&CC1200_RF_CFG, 0);
+  extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
+  cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
 #endif
-  if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-    for(i = 0; i < tsch_ts_elements_count; i++) {
-      tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
-    }
-  } else {
-    for(i = 0; i < tsch_ts_elements_count; i++) {
-      tsch_default_timing[i] = tsch_timing[i];
-    }
+  tsch_timing = TSCH_CONF_DEFAULT_TIMING;
+  for(i = 0; i < tsch_ts_elements_count; i++) {
+    tsch_default_timing[i] = tsch_timing[i];
   }
+
+  // if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
+  //   for(i = 0; i < tsch_ts_elements_count; i++) {
+  //     tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+  //   }
+  // } else {
+  //   for(i = 0; i < tsch_ts_elements_count; i++) {
+  //     tsch_default_timing[i] = tsch_timing[i];
+  //   }
+  // }
 #ifdef TSCH_CALLBACK_LEAVING_NETWORK
   TSCH_CALLBACK_LEAVING_NETWORK();
 #endif
@@ -596,10 +604,15 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
 #if TSCH_WITH_MULTIRADIO
       multiradio_select(&TSCH_CONF_SCANNING_RADIO);
 #endif /* TSCH_WITH_MULTIRADIO */
+#if TSCH_WITH_CC1200_RECONF
+      extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
+      cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
+#endif
+      /* Just assign tsch_timing for subsequent calculations, but keep default timing unchanged (initialized in reset()) */
       if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-        tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
+      // tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
       } else {
-        tsch_default_timing[i] = tsch_timing[i];
+       //tsch_default_timing[i] = tsch_timing[i];
       }
     } else {
       tsch_default_timing[i] = US_TO_RTIMERTICKS(ies.ie_tsch_timeslot[i]);
@@ -750,6 +763,10 @@ PT_THREAD(tsch_scan(struct pt *pt))
 
 #if TSCH_WITH_MULTIRADIO
     multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+#endif
+#if TSCH_WITH_CC1200_RECONF
+    extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
+    cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
 #endif
     if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
       tsch_timing = tsch_default_timing;
