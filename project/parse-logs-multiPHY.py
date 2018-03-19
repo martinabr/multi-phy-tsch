@@ -119,14 +119,16 @@ def getStats(df):
     statsFlat = stats.reset_index()
 
     # compute reverse link's rx count
-    print("Extracting statistics: reverse link stats")
-    statsFlat["rxCountBack"] = statsFlat.apply(lambda x, stats=stats: \
-        stats.loc[x.radio, x.channel, x.destination, x.source].rxCount if (x.radio, x.channel, x.destination, x.source) in stats.index.tolist() else 0, axis=1)
+    #print("Extracting statistics: reverse link stats")
+    #statsFlat["rxCountBack"] = statsFlat.apply(lambda x, stats=stats: \
+    #    0 if not (x.radio, x.channel, x.destination, x.source) in stats.index.tolist() else \
+    #    stats.loc[x.radio, x.channel, x.destination, x.source].rxCount, axis=1)
 
     print("Extracting statistics: asymmetry indicator")
-    statsFlat["asymmetry"] = statsFlat.apply(lambda x, stats=stats: 0 if x.destination == 0 or not (x.radio, x.channel, x.destination, 0) in stats else \
+    statsFlat["asymmetry"] = statsFlat.apply(lambda x, stats=stats: \
+        np.nan if x.destination == 0 or not (x.radio, x.channel, x.destination, x.source) in stats.index.tolist() else \
         abs((x.rxCount / stats.loc[x.radio, x.channel, x.source, 0].txCount) \
-        - (x.rxCountBack / stats.loc[x.radio, x.channel, x.destination, 0].txCount)), axis=1)
+        - (stats.loc[x.radio, x.channel, x.destination, x.source].rxCount / stats.loc[x.radio, x.channel, x.destination, 0].txCount)), axis=1)
 
     # now compute stats per source
     print("Extracting statistics: per source")
@@ -158,7 +160,8 @@ def getTimeSeries(df, radio):
     # compute txCount, rxCount and mean RSSI
     tsStats = groupAll.agg({'noise': {'noise': "mean"}, 'rssi': { 'rxCount': "count", 'rssi': "mean"}, 'isTx': {'txCount': 'sum'}})
     # compute reach
-    tsStats["reach"] = tsStats["rxCount"] / tsStats["txCount"]
+    tsStats["reach"] = tsStats.apply(lambda x: 0 if x.txCount==0 else x.rxCount / x.txCount, axis=1)
+
     # unstack
     tsStats = tsStats.unstack()
 
@@ -182,7 +185,7 @@ def main():
     file = os.path.join(dir, "logs", "log.txt")
 
     # Parse the original log
-    h5file = os.path.join(dir, 'df.h5')
+    h5file = os.path.join(dir, 'cache-parsed.h5')
     if os.path.exists(h5file):
         print("Loading %s file" %(h5file))
         df = pd.read_hdf(h5file,'df')
@@ -194,7 +197,7 @@ def main():
     dfComm = df[df.isNoise == False]
 
     # Process the parsed data
-    pklFile = os.path.join(dir, 'allStats.pkl')
+    pklFile = os.path.join(dir, 'cache-processed.pkl')
     if os.path.exists(pklFile):
         print("Loading %s file" %(pklFile))
         pickleFile = open(pklFile, 'rb')
@@ -256,7 +259,7 @@ def main():
         allStats["timeSeries"][radio]["reach"].plot()
         plt.savefig(os.path.join(dir, "timeline-%s-reach.pdf"%(str(radio))))
         allStats["timeSeries"][radio]["rssi"].plot()
-        plt.savefig(os.path.join(dir, "timeline-%s-reach.pdf"%(str(radio))))
+        plt.savefig(os.path.join(dir, "timeline-%s-rssi.pdf"%(str(radio))))
         allStats["timeSeries"][radio]["noise"].plot()
         plt.savefig(os.path.join(dir, "timeline-%s-noise.pdf"%(str(radio))))
 
