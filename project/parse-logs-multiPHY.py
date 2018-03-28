@@ -126,7 +126,11 @@ def getStats(df):
 
     print("Extracting statistics: asymmetry indicator")
     statsFlat["asymmetry"] = statsFlat.apply(lambda x, stats=stats: \
-        np.nan if x.destination == 0 or not (x.radio, x.channel, x.destination, x.source) in stats.index.tolist() else \
+        np.nan if x.destination == 0 \
+        or not (x.radio, x.channel, x.destination, x.source) in stats.index.tolist() \
+        or not (x.radio, x.channel, x.destination, 0) in stats.index.tolist() \
+        or not (x.radio, x.channel, x.source, 0) in stats.index.tolist() \
+        else \
         abs((x.rxCount / stats.loc[x.radio, x.channel, x.source, 0].txCount) \
         - (stats.loc[x.radio, x.channel, x.destination, x.source].rxCount / stats.loc[x.radio, x.channel, x.destination, 0].txCount)), axis=1)
 
@@ -177,16 +181,20 @@ def getTimeSeries(df, radio):
     return tsStats
 
 def main():
+    force = False
+
     if len(sys.argv) < 1:
         return
     else:
         dir = sys.argv[1].rstrip('/')
+        if len(sys.argv) > 1:
+            force = sys.argv[2] == "1"
 
     file = os.path.join(dir, "logs", "log.txt")
 
     # Parse the original log
     h5file = os.path.join(dir, 'cache-parsed.h5')
-    if os.path.exists(h5file):
+    if not force and os.path.exists(h5file):
         print("Loading %s file" %(h5file))
         df = pd.read_hdf(h5file,'df')
     else:
@@ -198,7 +206,7 @@ def main():
 
     # Process the parsed data
     pklFile = os.path.join(dir, 'cache-processed.pkl')
-    if os.path.exists(pklFile):
+    if not force and os.path.exists(pklFile):
         print("Loading %s file" %(pklFile))
         pickleFile = open(pklFile, 'rb')
         allStats = pickle.load(pickleFile)
