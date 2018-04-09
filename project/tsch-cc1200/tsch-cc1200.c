@@ -57,8 +57,17 @@
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-#define LOOP_INTERVAL       (9*CLOCK_SECOND)
+#define LOOP_INTERVAL       (8*CLOCK_SECOND)
 #define TSCH_COORDINATOR_ID 1
+
+#include "cc1200-rf-cfg.h"
+extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_8kbps;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+extern const struct radio_driver cc1200_driver;
+extern const struct radio_driver cc2538_rf_driver;
 
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
@@ -87,11 +96,12 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 
   /* Initialize NullNet */
   nullnet_buf = (uint8_t *)&count;
-  nullnet_len = sizeof(count) + 8; /* Add 8 bytes to match the EB len*/
+  nullnet_len = sizeof(count) + 8 + 93; /* Add 8 bytes to match the EB len*/
   nullnet_set_input_callback(input_callback);
 
   /* Create TSCH schedule */
   sf = tsch_schedule_add_slotframe(0, 29);
+  sf->cc1200_config = &CC1200_CONF_RF_CFG;
   tsch_schedule_add_link(sf,
        LINK_OPTION_TX,
        LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
@@ -113,13 +123,15 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 
   NETSTACK_MAC.on();
 
-  if(node_id == 1) {
+  if(node_id != 1) {
     etimer_set(&et, LOOP_INTERVAL);
     while(1) {
       PROCESS_YIELD();
       if(ev == PROCESS_EVENT_TIMER) {
+        linkaddr_t dest;
+        linkaddr_from_nodeid(&dest, 1);
         LOG_INFO("Sending seq %u\n", (unsigned)count);
-        NETSTACK_NETWORK.output(NULL);
+        NETSTACK_NETWORK.output(&dest);
         count++;
         etimer_reset(&et);
       }

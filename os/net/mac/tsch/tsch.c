@@ -752,6 +752,14 @@ PT_THREAD(tsch_scan(struct pt *pt))
   etimer_set(&scan_timer, CLOCK_SECOND / TSCH_ASSOCIATION_POLL_FREQUENCY);
   current_channel_since = clock_time();
 
+  #if TSCH_WITH_MULTIRADIO
+      multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+  #endif
+  #if TSCH_WITH_CC1200_RECONF
+      extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
+      cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
+  #endif
+
   while(!tsch_is_associated && !tsch_is_coordinator) {
     /* Hop to any channel offset */
     static int current_channel = -1;
@@ -760,14 +768,6 @@ PT_THREAD(tsch_scan(struct pt *pt))
     rtimer_clock_t t0;
     int is_packet_pending = 0;
     clock_time_t now_time = clock_time();
-
-#if TSCH_WITH_MULTIRADIO
-    multiradio_select(&TSCH_CONF_SCANNING_RADIO);
-#endif
-#if TSCH_WITH_CC1200_RECONF
-    extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
-    cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
-#endif
     if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
       tsch_timing = tsch_default_timing;
     }
@@ -775,8 +775,13 @@ PT_THREAD(tsch_scan(struct pt *pt))
     /* Switch to a (new) channel for scanning */
     if(current_channel == -1 || now_time - current_channel_since > TSCH_CHANNEL_SCAN_DURATION) {
       /* Pick a channel at random in TSCH_JOIN_HOPPING_SEQUENCE */
+#if TSCH_CONF_NO_HOPPING_SEQUENCE
+      uint8_t scan_channel = 0;
+#else
       uint8_t scan_channel = TSCH_JOIN_HOPPING_SEQUENCE[
           random_rand() % sizeof(TSCH_JOIN_HOPPING_SEQUENCE)];
+#endif
+
       if(current_channel != scan_channel) {
         NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, scan_channel);
         current_channel = scan_channel;
