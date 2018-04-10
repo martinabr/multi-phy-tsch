@@ -42,7 +42,7 @@
 #define __PROJECT_CONF_H__
 
 /* Logging */
-#define LOG_CONF_LEVEL_MAC LOG_LEVEL_INFO
+#define LOG_CONF_LEVEL_MAC LOG_LEVEL_WARN
 #define TSCH_LOG_CONF_PER_SLOT 1
 #define LOG_CONF_WITH_COMPACT_ADDR 1
 
@@ -53,9 +53,10 @@
 //#define NETSTACK_CONF_RADIO cc1200_driver
 #define NETSTACK_CONF_RADIO         cc1200_driver
 #define TSCH_CONF_SCANNING_RADIO      cc1200_driver /* used with CC1200_CONF_RF_CFG */
-#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
+#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_8kbps
 #define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* Because few channels */
 #define TSCH_CONF_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps

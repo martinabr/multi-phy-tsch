@@ -66,6 +66,7 @@ extern const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_8kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps;
 extern const struct radio_driver cc1200_driver;
 extern const struct radio_driver cc2538_rf_driver;
 
