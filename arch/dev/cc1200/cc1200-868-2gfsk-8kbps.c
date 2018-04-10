@@ -66,7 +66,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 8 kbps";
 
 #define CC1200_TSCH_DEFAULT_TS_CCA_OFFSET        1800
 #define CC1200_TSCH_DEFAULT_TS_CCA                128
-#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET       (10000+(TSCH_WITH_CC1200_RECONF)) /* Must be greater than preamble */
+#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET       (10100+(TSCH_WITH_CC1200_RECONF)) /* Must be greater than preamble */
 #define CC1200_TSCH_DEFAULT_TS_RX_OFFSET          (CC1200_TSCH_DEFAULT_TS_TX_OFFSET - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_RX_ACK_DELAY       (CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_ACK_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY      8300 /* Must be greater than preamble */
@@ -76,7 +76,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 8 kbps";
 #define CC1200_TSCH_DEFAULT_TS_MAX_ACK          10000 /* 7+1+3 bytes*/
 #define CC1200_TSCH_DEFAULT_TS_MAX_TX          130000 /* 126+1+3 bytes */
 
-#define CC1200_TSCH_DEFAULT_SLACK_TIME             550
+#define CC1200_TSCH_DEFAULT_SLACK_TIME             0
 #define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH  \
                                                   ( CC1200_TSCH_DEFAULT_TS_TX_OFFSET \
                                                   + CC1200_TSCH_DEFAULT_TS_MAX_TX \

@@ -79,6 +79,7 @@
 extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
+extern const cc1200_rf_cfg_t CC1200_CONF_RF_CFG;
 
 #if FRAME802154_VERSION < FRAME802154_IEEE802154_2015
 #error TSCH: FRAME802154_VERSION must be at least FRAME802154_IEEE802154_2015

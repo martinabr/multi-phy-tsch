@@ -53,23 +53,26 @@
 //#define NETSTACK_CONF_RADIO cc1200_driver
 #define NETSTACK_CONF_RADIO         cc1200_driver
 #define TSCH_CONF_SCANNING_RADIO      cc1200_driver /* used with CC1200_CONF_RF_CFG */
-#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_8kbps
+#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
 #define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* Because few channels */
 #define TSCH_CONF_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_8kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
 /* Make room in timeslot template for radio reconfig */
-#define TSCH_WITH_CC1200_RECONF 1600
+//#define TSCH_WITH_CC1200_RECONF 1600
+#define TSCH_WITH_CC1200_RECONF 0
 /* Tell TSCH to use multiple radios */
 #define TSCH_WITH_MULTIRADIO 1
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 /* No 6TiSCH minimal schedule */
-#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0
+#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 1
+#define TSCH_SCHEDULE_CONF_DEFAULT_LENGTH      1
 /* We will need more than 32 links */
 #define TSCH_SCHEDULE_CONF_MAX_LINKS 180
 #define TSCH_SCHEDULE_CONF_MAX_SLOTFRAMES 6

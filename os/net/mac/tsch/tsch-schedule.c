@@ -66,6 +66,10 @@
 #define LOG_MODULE "TSCH Sched"
 #define LOG_LEVEL LOG_LEVEL_MAC
 
+#include "cc1200-conf.h"
+#include "cc1200-rf-cfg.h"
+extern const cc1200_rf_cfg_t CC1200_CONF_RF_CFG;
+
 /* Pre-allocated space for links */
 MEMB(link_memb, struct tsch_link, TSCH_SCHEDULE_MAX_LINKS);
 /* Pre-allocated space for slotframes */
@@ -434,6 +438,7 @@ tsch_schedule_create_minimal(void)
       LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING,
       LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
       0, 0);
+  sf_min->cc1200_config = &CC1200_CONF_RF_CFG;
 }
 /*---------------------------------------------------------------------------*/
 struct tsch_slotframe *
