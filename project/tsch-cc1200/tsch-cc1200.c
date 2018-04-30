@@ -97,7 +97,8 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 
   /* Initialize NullNet */
   nullnet_buf = (uint8_t *)&count;
-  nullnet_len = sizeof(count) + 8 + 93; /* Add 8 bytes to match the EB len*/
+  nullnet_len = sizeof(count) + 8 + 93; /* Add 8 bytes to match the EB len
+                                            Add 8+93 to macth max frame len */
   nullnet_set_input_callback(input_callback);
 
   /* Create TSCH schedule */

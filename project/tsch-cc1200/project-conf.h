@@ -54,13 +54,13 @@
 #define NETSTACK_CONF_RADIO         cc1200_driver
 #define TSCH_CONF_SCANNING_RADIO      cc1200_driver /* used with CC1200_CONF_RF_CFG */
 #define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
-#define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* Because few channels */
-#define TSCH_CONF_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
-//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
+//#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_8kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
+#define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* Because few channels */
+#define TSCH_CONF_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
 /* Make room in timeslot template for radio reconfig */

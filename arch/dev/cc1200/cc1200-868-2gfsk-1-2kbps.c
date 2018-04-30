@@ -66,7 +66,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 1.2 kbps";
 
 #define CC1200_TSCH_DEFAULT_TS_CCA_OFFSET        1800
 #define CC1200_TSCH_DEFAULT_TS_CCA                128
-#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET        (52000+(TSCH_WITH_CC1200_RECONF)) /* Must be greater than preamble */
+#define CC1200_TSCH_DEFAULT_TS_TX_OFFSET        (54000+(TSCH_WITH_CC1200_RECONF)) /* Must be greater than preamble */
 #define CC1200_TSCH_DEFAULT_TS_RX_OFFSET          (CC1200_TSCH_DEFAULT_TS_TX_OFFSET - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_RX_ACK_DELAY       (CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY - CC1200_TSCH_PREAMBLE_LENGTH - (CC1200_TSCH_CONF_RX_ACK_WAIT / 2))
 #define CC1200_TSCH_DEFAULT_TS_TX_ACK_DELAY     45000 /* Must be greater than preamble */
@@ -164,10 +164,9 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps = {
   .tx_pkt_lifetime = (RTIMER_SECOND),
   .tx_rx_turnaround = (RTIMER_SECOND / 100),
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 6667usec per byte = 33335 usec */
-  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(33335+16365)),
+  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(33335+17985)),
   .delay_before_rx = (unsigned)US_TO_RTIMERTICKS(400),
-  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334-1800), /* Two bytes.
-  The reason why an offset of -1800 usec is need is yet to be figured out.. */
+  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334), /* Two bytes. */
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,
   .chan_spacing = RF_CFG_CHAN_SPACING,
   .min_channel = RF_CFG_MIN_CHANNEL,
