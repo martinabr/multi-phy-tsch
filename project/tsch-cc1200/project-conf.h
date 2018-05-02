@@ -51,7 +51,7 @@
 
 /* Use multiradio: both cc1200 and cc2538 */
 //#define NETSTACK_CONF_RADIO cc1200_driver
-#define NETSTACK_CONF_RADIO         cc1200_driver
+#define NETSTACK_CONF_RADIO           cc1200_driver
 #define TSCH_CONF_SCANNING_RADIO      cc1200_driver /* used with CC1200_CONF_RF_CFG */
 #define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps_sp
@@ -67,7 +67,7 @@
 //#define TSCH_WITH_CC1200_RECONF 1600
 #define TSCH_WITH_CC1200_RECONF 0
 /* Tell TSCH to use multiple radios */
-#define TSCH_WITH_MULTIRADIO 1
+#define TSCH_WITH_MULTIRADIO 0
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 /* No 6TiSCH minimal schedule */
@@ -78,6 +78,8 @@
 #define TSCH_SCHEDULE_CONF_MAX_SLOTFRAMES 6
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
 #define EB_ONLY_COORDINATOR 1
+/* Shorter EACKs */
+#define TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR 0
 
 /* EB and KA */
 #define TSCH_CONF_EB_PERIOD (8 * CLOCK_SECOND)

@@ -51,7 +51,7 @@
 
 /* Use multiradio: both cc1200 and cc2538 */
 //#define NETSTACK_CONF_RADIO cc1200_driver
-#define NETSTACK_CONF_RADIO         multiradio_driver
+#define NETSTACK_CONF_RADIO      multiradio_driver
 #define TSCH_CONF_SCANNING_RADIO cc1200_driver /* used with CC1200_CONF_RF_CFG */
 #define TSCH_CONF_SCANNING_CC1200_CFG cc1200_868_4gfsk_1000kbps /* Because few channels */
 #define TSCH_CONF_DEFAULT_TIMING cc1200_868_2gfsk_1_2kbps_sp.tsch_timing
@@ -74,6 +74,8 @@
 #define TSCH_SCHEDULE_CONF_MAX_SLOTFRAMES 6
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
 #define EB_ONLY_COORDINATOR 0
+/* Shorter EACKs */
+#define TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR 0
 
 /* EB and KA */
 #define TSCH_CONF_EB_PERIOD (1)

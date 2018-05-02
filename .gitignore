@@ -7,11 +7,14 @@
 *.elf
 *.zip
 *.d
+*.o
+*.e
 *.ihex
 *.pyc
 *~
 obj_*
 Makefile.target
+Makefile.*.defines
 tools/doxygen/html
 patches-*
 tools/tunslip
@@ -19,8 +22,6 @@ tools/tunslip6
 build
 tools/coffee-manager/build/
 tools/coffee-manager/coffee.jar
-tools/collect-view/build/
-tools/collect-view/dist/
 COOJA.testlog
 
 # platform build artifacts
@@ -31,6 +32,7 @@ COOJA.testlog
 *.nrf52dk
 *.openmote-cc2538
 *.sky
+*.firmware
 *.srf06-cc26xx
 *.zoul
 

@@ -41,65 +41,8 @@
 /********** Includes **********/
 
 #include "contiki.h"
-#include "net/packetbuf.h"
-#include "net/mac/tsch/tsch-private.h"
 #include "net/mac/framer/frame802154.h"
 #include "net/mac/framer/frame802154e-ie.h"
-
-/******** Configuration *******/
-
-#define TSCH_PACKET_IE_ELIDED 0 /* Skip the IE altogether */
-#define TSCH_PACKET_IE_DEFVAL 1 /* Include short version of the IE, i.e. deffault value */
-#define TSCH_PACKET_IE_INLINE 2 /* Skip the IE altogether */
-
-/* TSCH EB: include timeslot timing Information Element? */
-#ifdef TSCH_PACKET_CONF_EB_WITH_TIMESLOT_TIMING
-#define TSCH_PACKET_EB_WITH_TIMESLOT_TIMING TSCH_PACKET_CONF_EB_WITH_TIMESLOT_TIMING
-#else
-#define TSCH_PACKET_EB_WITH_TIMESLOT_TIMING TSCH_PACKET_IE_ELIDED
-#endif
-
-/* TSCH EB: include hopping sequence Information Element? */
-#ifdef TSCH_PACKET_CONF_EB_WITH_HOPPING_SEQUENCE
-#define TSCH_PACKET_EB_WITH_HOPPING_SEQUENCE TSCH_PACKET_CONF_EB_WITH_HOPPING_SEQUENCE
-#else
-#define TSCH_PACKET_EB_WITH_HOPPING_SEQUENCE TSCH_PACKET_IE_ELIDED
-#endif
-
-/* TSCH EB: include slotframe and link Information Element? */
-#ifdef TSCH_PACKET_CONF_EB_WITH_SLOTFRAME_AND_LINK
-#define TSCH_PACKET_EB_WITH_SLOTFRAME_AND_LINK TSCH_PACKET_CONF_EB_WITH_SLOTFRAME_AND_LINK
-#else
-#define TSCH_PACKET_EB_WITH_SLOTFRAME_AND_LINK TSCH_PACKET_IE_ELIDED
-#endif
-
-/* TSCH EB: include explicit temrination of payload IEs? Not necessary as all EBs have
- * is header, header IE and payload IE, no actual pauyload. Disabled by default */
-#ifdef TSCH_PACKET_CONF_EB_WITH_PAYLOAD_IE_LIST_TERMINATION
-#define TSCH_PACKET_EB_WITH_PAYLOAD_IE_LIST_TERMINATION TSCH_PACKET_CONF_EB_WITH_PAYLOAD_IE_LIST_TERMINATION
-#else
-#define TSCH_PACKET_EB_WITH_PAYLOAD_IE_LIST_TERMINATION TSCH_PACKET_IE_ELIDED
-#endif
-
-/* Include source address in ACK? */
-#ifdef TSCH_PACKET_CONF_EACK_WITH_SRC_ADDR
-#define TSCH_PACKET_EACK_WITH_SRC_ADDR TSCH_PACKET_CONF_EACK_WITH_SRC_ADDR
-#else
-#define TSCH_PACKET_EACK_WITH_SRC_ADDR 0
-#endif
-
-/* Include destination address in ACK? */
-#ifdef TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR
-#define TSCH_PACKET_EACK_WITH_DEST_ADDR TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR
-#else
-#define TSCH_PACKET_EACK_WITH_DEST_ADDR 0 /* Include destination address
-by default, useful in case of duplicate seqno */
-#endif
-
-/********** Constants *********/
-
-/* Max TSCH packet lenght */
-#define TSCH_PACKET_MAX_LEN MIN(127,PACKETBUF_SIZE)
 
 /********** Functions *********/
 

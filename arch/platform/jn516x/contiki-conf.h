@@ -38,11 +38,7 @@
 #include PROJECT_CONF_PATH
 #endif /* PROJECT_CONF_PATH */
 
-#ifdef PLATFORM_CONF_H
-#include PLATFORM_CONF_H
-#else
-#include "platform-conf.h"
-#endif /* PLATFORM_CONF_H */
+#include "jn516x-def.h"
 
 /* Configure radio driver */
 #ifndef NETSTACK_CONF_RADIO

@@ -34,17 +34,21 @@
 
 #include "cc1200-rf-cfg.h"
 #include "cc1200-const.h"
-#include "net/mac/tsch/tsch-private.h"
+#include "net/mac/tsch/tsch.h"
+
+#ifndef TSCH_WITH_CC1200_RECONF
+#define TSCH_WITH_CC1200_RECONF 0
+#endif
 
 /*
 * Register settings exported from SmartRF Studio using the standard 50kpbs 868MHz template
 * but at a 1.2 kbps rate instead. The channel spacing is kept at 200 kHz.
  */
 
- /* Base frequency in kHz */
- #define RF_CFG_CHAN_CENTER_F0           863125
- /* Channel spacing in Hz */
- #define RF_CFG_CHAN_SPACING             200000
+/* Base frequency in kHz */
+#define RF_CFG_CHAN_CENTER_F0           863125
+/* Channel spacing in Hz */
+#define RF_CFG_CHAN_SPACING             200000
 /* The minimum channel */
 #define RF_CFG_MIN_CHANNEL              0
 /* The maximum channel */

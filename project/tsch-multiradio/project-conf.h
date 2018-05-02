@@ -67,6 +67,8 @@
 /* We will need more than 32 links */
 #define TSCH_SCHEDULE_CONF_MAX_LINKS 60
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
+/* Shorter EACKs */
+#define TSCH_PACKET_CONF_EACK_WITH_DEST_ADDR 0
 
 /* EB and KA */
 #define TSCH_CONF_EB_PERIOD (4 * CLOCK_SECOND)

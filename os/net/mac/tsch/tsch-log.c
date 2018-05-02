@@ -48,12 +48,6 @@
 #include "contiki.h"
 #include <stdio.h>
 #include "net/mac/tsch/tsch.h"
-#include "net/mac/tsch/tsch-queue.h"
-#include "net/mac/tsch/tsch-private.h"
-#include "net/mac/tsch/tsch-log.h"
-#include "net/mac/tsch/tsch-packet.h"
-#include "net/mac/tsch/tsch-schedule.h"
-#include "net/mac/tsch/tsch-slot-operation.h"
 #include "lib/ringbufindex.h"
 #include "sys/log.h"
 
@@ -116,7 +110,7 @@ tsch_log_process_pending(void)
         printf(", len %3u, seq %3u, st %d %2d",
                 log->tx.datalen, log->tx.seqno, log->tx.mac_tx_status, log->tx.num_tx);
         if(log->tx.drift_used) {
-          printf(", dr %d", log->tx.drift);
+          printf(", dr %3d", log->tx.drift);
         }
         printf("\n");
         break;

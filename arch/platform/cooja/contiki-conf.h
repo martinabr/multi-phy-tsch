@@ -42,9 +42,13 @@
 #include "subplatform-conf.h"
 #endif /* INCLUDE_SUBPLATFORM_CONF */
 
+#define PLATFORM_CONF_PROVIDES_MAIN_LOOP 1
+
 #define LOG_CONF_ENABLED 1
 
 #define COOJA 1
+
+#define LEDS_CONF_LEGACY_API 1
 
 #ifndef EEPROM_CONF_SIZE
 #define EEPROM_CONF_SIZE				1024
@@ -98,9 +102,6 @@
 #define CC_CONF_VA_ARGS                1
 #define CC_CONF_INLINE inline
 
-#define CCIF
-#define CLIF
-
 /* These names are deprecated, use C99 names. */
 #include <inttypes.h>
 typedef uint8_t u8_t;
@@ -132,7 +133,8 @@ typedef uint64_t rtimer_clock_t;
 
 #define CFS_CONF_OFFSET_TYPE	long
 
-#define RF_CHANNEL                     26
 #define NETSTACK_RADIO_MAX_PAYLOAD_LEN 125
+
+#define PLATFORM_CONF_SUPPORTS_STACK_CHECK  0
 
 #endif /* CONTIKI_CONF_H_ */

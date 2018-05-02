@@ -32,7 +32,7 @@
  */
 /*---------------------------------------------------------------------------*/
 /**
- * \addtogroup platform
+ * \addtogroup cc2538-platforms
  * @{
  *
  * \defgroup openmote-cc2538 OpenMote-CC2538 platform
@@ -55,8 +55,10 @@
 #include "dev/cc2538-rf.h"
 #include "dev/udma.h"
 #include "dev/crypto.h"
+#include "dev/button-hal.h"
 #include "usb/usb-serial.h"
 #include "lib/random.h"
+#include "lib/sensors.h"
 #include "net/netstack.h"
 #include "net/mac/framer/frame802154.h"
 #include "net/linkaddr.h"
@@ -82,7 +84,7 @@
 void board_init(void);
 /*---------------------------------------------------------------------------*/
 static void
-fade(unsigned char l)
+fade(leds_mask_t l)
 {
   volatile int i;
   int k, j;
@@ -91,11 +93,11 @@ fade(unsigned char l)
 
     leds_on(l);
     for(i = 0; i < j; ++i) {
-      asm("nop");
+      __asm("nop");
     }
     leds_off(l);
     for(i = 0; i < 400 - j; ++i) {
-      asm("nop");
+      __asm("nop");
     }
   }
 }
@@ -113,7 +115,7 @@ set_rf_params(void)
 
   NETSTACK_RADIO.set_value(RADIO_PARAM_PAN_ID, IEEE802154_PANID);
   NETSTACK_RADIO.set_value(RADIO_PARAM_16BIT_ADDR, short_addr);
-  NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CC2538_RF_CHANNEL);
+  NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, IEEE802154_DEFAULT_CHANNEL);
   NETSTACK_RADIO.set_object(RADIO_PARAM_64BIT_ADDR, ext_addr, 8);
 }
 /*---------------------------------------------------------------------------*/
@@ -157,6 +159,8 @@ platform_init_stage_two()
   /* Populate linkaddr_node_addr */
   ieee_addr_cpy_to(linkaddr_node_addr.u8, LINKADDR_SIZE);
 
+  button_hal_init();
+
   INTERRUPTS_ENABLE();
 
   fade(LEDS_BLUE);
@@ -174,8 +178,6 @@ platform_init_stage_three()
   soc_print_info();
 
   process_start(&sensors_process, NULL);
-
-  SENSORS_ACTIVATE(button_sensor);
 
   fade(LEDS_GREEN);
 }

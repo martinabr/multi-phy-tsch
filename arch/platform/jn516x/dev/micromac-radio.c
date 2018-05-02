@@ -100,11 +100,6 @@
 #define MIRCOMAC_CONF_BUF_NUM 2
 #endif /* MIRCOMAC_CONF_BUF_NUM */
 
-/* Init radio channel */
-#ifndef MICROMAC_CONF_CHANNEL
-#define MICROMAC_CONF_CHANNEL 26
-#endif
-
 /* Default energy level threshold for clear channel detection */
 #ifndef MICROMAC_CONF_CCA_THR
 #define MICROMAC_CONF_CCA_THR 39 /* approximately -85 dBm */
@@ -159,7 +154,7 @@ static uint8_t autoack_enabled = MICROMAC_CONF_AUTOACK;
 static uint8_t send_on_cca = 0;
 
 /* Current radio channel */
-static int current_channel = MICROMAC_CONF_CHANNEL;
+static int current_channel = IEEE802154_DEFAULT_CHANNEL;
 
 /* Current set point tx power
    Actual tx power may be different. Use get_txpower() for actual power */
@@ -278,8 +273,7 @@ init(void)
     vMMAC_EnableInterrupts(&radio_interrupt_handler);
   }
   vMMAC_ConfigureRadio();
-  set_channel(current_channel);
-  set_txpower(current_tx_power);
+  set_txpower(current_tx_power); /* it sets also the current_channel */
 
   vMMAC_GetMacAddress(&node_long_address);
   /* Short addresses are disabled by default */
@@ -493,8 +487,7 @@ void
 set_channel(int c)
 {
   current_channel = c;
-  /* will fine tune TX power as well */
-  vMMAC_SetChannel(current_channel);
+  vMMAC_SetChannelAndPower(current_channel, current_tx_power);
 }
 /*---------------------------------------------------------------------------*/
 #if !MICROMAC_RADIO_MAC

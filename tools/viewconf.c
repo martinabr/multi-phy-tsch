@@ -1,8 +1,6 @@
 #include "contiki.h"
 #include "os/net/mac/framer/frame802154.h"
 #include "os/net/mac/tsch/tsch.h"
-#include "os/net/mac/tsch/tsch-conf.h"
-#include "os/net/mac/tsch/tsch-schedule.h"
 #include "os/net/ipv6/uip-nd6.h"
 #include "os/net/ipv6/uipopt.h"
 #include "os/net/queuebuf.h"
@@ -18,16 +16,16 @@
 
 ##### "CONTIKI_VERSION_STRING": ________________ == CONTIKI_VERSION_STRING
 
-#ifdef IEEE802154_CONF_PANID
-##### "IEEE802154_CONF_PANID":__________________ == IEEE802154_CONF_PANID
-#else
-##### "IEEE802154_CONF_PANID":__________________ == IEEE802154_PANID
-#endif
-
 #ifdef FRAME802154_CONF_VERSION
 ##### "FRAME802154_CONF_VERSION":_______________ == FRAME802154_CONF_VERSION
 #else
 ##### "FRAME802154_CONF_VERSION":_______________ == FRAME802154_VERSION
+#endif
+
+#ifdef IEEE802154_CONF_PANID
+##### "IEEE802154_CONF_PANID":__________________ == IEEE802154_CONF_PANID
+#else
+##### "IEEE802154_CONF_PANID":__________________ == IEEE802154_PANID
 #endif
 
 #if MAC_CONF_WITH_TSCH
@@ -62,18 +60,18 @@
 ##### "TSCH_CONF_DEFAULT_TIMESLOT_LENGTH": _____ -> TSCH_DEFAULT_TIMESLOT_LENGTH
 #endif
 
-#ifdef TSCH_CONF_SCHEDULE_DEFAULT_LENGTH
-##### "TSCH_CONF_SCHEDULE_DEFAULT_LENGTH": _____ == TSCH_CONF_SCHEDULE_DEFAULT_LENGTH
+#ifdef TSCH_SCHEDULE_CONF_DEFAULT_LENGTH
+##### "TSCH_SCHEDULE_CONF_DEFAULT_LENGTH": _____ == TSCH_SCHEDULE_CONF_DEFAULT_LENGTH
 #else
-##### "TSCH_CONF_SCHEDULE_DEFAULT_LENGTH": _____ -> TSCH_CHEDULE_DEFAULT_LENGTH
+##### "TSCH_SCHEDULE_CONF_DEFAULT_LENGTH": _____ -> TSCH_SCHEDULE_DEFAULT_LENGTH
 #endif
 
 #else /* MAC_CONF_WITH_TSCH */
 
-#ifdef RF_CHANNEL
-##### "RF_CHANNEL": ____________________________ == RF_CHANNEL
+#ifdef IEEE802154_CONF_DEFAULT_CHANNEL
+##### "IEEE802154_CONF_DEFAULT_CHANNEL": _______ == IEEE802154_CONF_DEFAULT_CHANNEL
 #else
-##### "RF_CHANNEL": ____________________________ ><
+##### "IEEE802154_CONF_DEFAULT_CHANNEL": _______ -> IEEE802154_DEFAULT_CHANNEL
 #endif
 
 #endif /*MAC_CONF_WITH_TSCH */
@@ -150,4 +148,6 @@
 ##### "LOG_CONF_LEVEL_MAC": ____________________ == LOG_CONF_LEVEL_MAC
 ##### "LOG_CONF_LEVEL_FRAMER": _________________ == LOG_CONF_LEVEL_FRAMER
 ##### "LOG_CONF_LEVEL_6TOP": ___________________ == LOG_CONF_LEVEL_6TOP
+##### "LOG_CONF_LEVEL_COAP": ___________________ == LOG_CONF_LEVEL_COAP
+##### "LOG_CONF_LEVEL_LWM2M": __________________ == LOG_CONF_LEVEL_LWM2M
 ##### "LOG_CONF_LEVEL_MAIN": ___________________ == LOG_CONF_LEVEL_MAIN

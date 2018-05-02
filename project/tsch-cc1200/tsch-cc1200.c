@@ -47,7 +47,7 @@
 #include "net/netstack.h"
 #include "net/packetbuf.h"
 #include "deployment/deployment.h"
-#include "net/mac/tsch/tsch-schedule.h"
+#include "net/mac/tsch/tsch.h"
 
 #include <stdio.h>
 #include <stdint.h>

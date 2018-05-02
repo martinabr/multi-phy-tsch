@@ -34,7 +34,11 @@
 
 #include "cc1200-rf-cfg.h"
 #include "cc1200-const.h"
-#include "net/mac/tsch/tsch-private.h"
+#include "net/mac/tsch/tsch.h"
+
+#ifndef TSCH_WITH_CC1200_RECONF
+#define TSCH_WITH_CC1200_RECONF 0
+#endif
 
 /*
  * This is a setup for the following configuration:

@@ -8,6 +8,10 @@ BASENAME=04-border-router-traceroute
 
 # Destination IPv6
 IPADDR=fd00::204:4:4:4
+
+# Time allocated for toplogy formation
+WAIT_TIME=60
+
 # The expected hop count
 TARGETHOPS=4
 
@@ -17,16 +21,13 @@ java -Xshare:on -jar $CONTIKI/tools/cooja/dist/cooja.jar -nogui=$BASENAME.csc -c
 JPID=$!
 sleep 20
 
-echo "Enabling IPv6"
-sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
-
 # Connect to the simlation
 echo "Starting tunslip6"
 make -C $CONTIKI/tools tunslip6
 make -C $CONTIKI/examples/rpl-border-router/ connect-router-cooja TARGET=zoul >> $BASENAME.tunslip.log 2>&1 &
 MPID=$!
-echo "Waiting for network formation"
-sleep 5
+printf "Waiting for network formation (%d seconds)\n" "$WAIT_TIME"
+sleep $WAIT_TIME
 
 # Do ping
 echo "Running Traceroute"
