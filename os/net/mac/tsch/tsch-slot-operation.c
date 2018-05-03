@@ -995,7 +995,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 #endif
 
         if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-          tsch_timing = tsch_default_timing;
+          tsch_timing = TSCH_CONF_MULTIPHY_DEFAULT_TIMING;
         }
 
         /* Turn the radio on already here if configured so; necessary for radios with slow startup */
@@ -1037,7 +1037,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
     /* Do we need to resynchronize? i.e., wait for EB again */
     if(!tsch_is_coordinator && (TSCH_ASN_DIFF(tsch_current_asn, last_sync_asn) >
-        (TSCH_CLOCK_TO_SLOTS(TSCH_DESYNC_THRESHOLD, tsch_default_timing[tsch_ts_timeslot_length])))) {
+        (TSCH_CLOCK_TO_SLOTS(TSCH_DESYNC_THRESHOLD, TSCH_CONF_MULTIPHY_DEFAULT_TIMING[tsch_ts_timeslot_length])))) {
       TSCH_LOG_ADD(tsch_log_message,
             snprintf(log->message, sizeof(log->message),
                 "! leaving the network, last sync %u",
@@ -1072,7 +1072,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         /* Update ASN */
         TSCH_ASN_INC(tsch_current_asn, timeslot_diff);
         /* Time to next wake up */
-        time_to_next_active_slot = timeslot_diff * tsch_default_timing[tsch_ts_timeslot_length] + drift_correction;
+        time_to_next_active_slot = timeslot_diff * TSCH_CONF_MULTIPHY_DEFAULT_TIMING[tsch_ts_timeslot_length] + drift_correction;
         time_to_next_active_slot += tsch_timesync_adaptive_compensate(time_to_next_active_slot);
         drift_correction = 0;
         is_drift_correction_used = 0;
@@ -1110,7 +1110,7 @@ tsch_slot_operation_start(void)
     /* Update ASN */
     TSCH_ASN_INC(tsch_current_asn, timeslot_diff);
     /* Time to next wake up */
-    time_to_next_active_slot = timeslot_diff * tsch_default_timing[tsch_ts_timeslot_length];
+    time_to_next_active_slot = timeslot_diff * TSCH_CONF_MULTIPHY_DEFAULT_TIMING[tsch_ts_timeslot_length];
     /* Update current slot start */
     prev_slot_start = current_slot_start;
     current_slot_start += time_to_next_active_slot;

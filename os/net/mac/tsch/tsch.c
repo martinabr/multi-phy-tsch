@@ -114,24 +114,8 @@ NBR_TABLE(struct eb_stat, eb_stats);
 uint8_t tsch_hopping_sequence[TSCH_HOPPING_SEQUENCE_MAX_LEN];
 struct tsch_asn_divisor_t tsch_hopping_sequence_length;
 
-/* Default TSCH timeslot timing (in micro-second) */
-static const uint16_t tsch_default_timing_us[tsch_ts_elements_count] = {
-  TSCH_DEFAULT_TS_CCA_OFFSET,
-  TSCH_DEFAULT_TS_CCA,
-  TSCH_DEFAULT_TS_TX_OFFSET,
-  TSCH_DEFAULT_TS_RX_OFFSET,
-  TSCH_DEFAULT_TS_RX_ACK_DELAY,
-  TSCH_DEFAULT_TS_TX_ACK_DELAY,
-  TSCH_DEFAULT_TS_RX_WAIT,
-  TSCH_DEFAULT_TS_ACK_WAIT,
-  TSCH_DEFAULT_TS_RX_TX,
-  TSCH_DEFAULT_TS_MAX_ACK,
-  TSCH_DEFAULT_TS_MAX_TX,
-  TSCH_DEFAULT_TS_TIMESLOT_LENGTH,
-};
 /* TSCH timeslot timing (in rtimer ticks) */
-rtimer_clock_t tsch_default_timing[tsch_ts_elements_count];
-rtimer_clock_t *tsch_timing = tsch_default_timing;
+rtimer_clock_t *tsch_timing = NULL;
 
 #if LINKADDR_SIZE == 8
 /* 802.15.4 broadcast MAC address  */
@@ -229,7 +213,6 @@ tsch_set_eb_period(uint32_t period)
 static void
 tsch_reset(void)
 {
-  int i;
   frame802154_set_pan_id(0xffff);
   /* First make sure pending packet callbacks are sent etc */
   process_post_synch(&tsch_pending_events_process, PROCESS_EVENT_POLL, NULL);
@@ -250,20 +233,9 @@ tsch_reset(void)
   extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
   cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
 #endif
-  tsch_timing = TSCH_CONF_DEFAULT_TIMING;
-  for(i = 0; i < tsch_ts_elements_count; i++) {
-    tsch_default_timing[i] = tsch_timing[i];
-  }
 
-  // if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-  //   for(i = 0; i < tsch_ts_elements_count; i++) {
-  //     tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
-  //   }
-  // } else {
-  //   for(i = 0; i < tsch_ts_elements_count; i++) {
-  //     tsch_default_timing[i] = tsch_timing[i];
-  //   }
-  // }
+tsch_timing = TSCH_CONF_MULTIPHY_DEFAULT_TIMING;
+
 #ifdef TSCH_CALLBACK_LEAVING_NETWORK
   TSCH_CALLBACK_LEAVING_NETWORK();
 #endif
@@ -594,23 +566,21 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   }
 
   /* TSCH timeslot timing */
-  for(i = 0; i < tsch_ts_elements_count; i++) {
-    if(ies.ie_tsch_timeslot_id == 0) {
+  if(ies.ie_tsch_timeslot_id == 0) {
 #if TSCH_WITH_MULTIRADIO
-      multiradio_select(&TSCH_CONF_SCANNING_RADIO);
+    multiradio_select(&TSCH_CONF_SCANNING_RADIO);
 #endif /* TSCH_WITH_MULTIRADIO */
 #if TSCH_WITH_CC1200_RECONF
-      extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
-      cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
+    extern const cc1200_rf_cfg_t TSCH_CONF_SCANNING_CC1200_CFG;
+    cc1200_reconfigure(&TSCH_CONF_SCANNING_CC1200_CFG, 0);
 #endif
-      /* Just assign tsch_timing for subsequent calculations, but keep default timing unchanged (initialized in reset()) */
-      if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-      // tsch_default_timing[i] = US_TO_RTIMERTICKS(tsch_default_timing_us[i]);
-      } else {
-       //tsch_default_timing[i] = tsch_timing[i];
-      }
-    } else {
-      tsch_default_timing[i] = US_TO_RTIMERTICKS(ies.ie_tsch_timeslot[i]);
+    /* Just assign tsch_timing for subsequent calculations, but keep default timing unchanged (initialized in reset()) */
+    if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
+      tsch_timing = TSCH_CONF_MULTIPHY_DEFAULT_TIMING;
+    }
+  } else {
+    for(i = 0; i < tsch_ts_elements_count; i++) {
+      tsch_timing[i] = US_TO_RTIMERTICKS(ies.ie_tsch_timeslot[i]);
     }
   }
 
@@ -764,7 +734,7 @@ PT_THREAD(tsch_scan(struct pt *pt))
     int is_packet_pending = 0;
     clock_time_t now_time = clock_time();
     if(NETSTACK_RADIO.get_object(RADIO_CONST_TSCH_TIMING, &tsch_timing, sizeof(rtimer_clock_t *)) != RADIO_RESULT_OK) {
-      tsch_timing = tsch_default_timing;
+      tsch_timing = TSCH_CONF_MULTIPHY_DEFAULT_TIMING;
     }
 
     /* Switch to a (new) channel for scanning */

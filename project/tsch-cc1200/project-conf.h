@@ -60,7 +60,7 @@
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* Because few channels */
-#define TSCH_CONF_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
+#define TSCH_CONF_MULTIPHY_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
 /* Make room in timeslot template for radio reconfig */
