@@ -1,4 +1,5 @@
-all: tsch-multiradio
+CONTIKI_PROJECT = tsch-multiradio
+all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly

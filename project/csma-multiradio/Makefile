@@ -1,4 +1,5 @@
-all: csma-multiradio
+CONTIKI_PROJECT = csma-multiradio
+all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly

@@ -1,4 +1,5 @@
-all: tsch-multiPHY
+CONTIKI_PROJECT = tsch-multiPHY
+all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly

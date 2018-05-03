@@ -1,4 +1,5 @@
-all: tsch-cc1200
+CONTIKI_PROJECT = tsch-cc1200
+all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly

@@ -1,4 +1,5 @@
-all: csma-cc1200
+CONTIKI_PROJECT = csma-cc1200
+all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
 BOARD ?= firefly
