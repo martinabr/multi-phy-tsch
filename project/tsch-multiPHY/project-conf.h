@@ -41,7 +41,7 @@
 #ifndef __PROJECT_CONF_H__
 #define __PROJECT_CONF_H__
 
-#define TABLETOP_TEST 1
+#define TABLETOP_TEST 0
 
 /* Logging */
 #define LOG_CONF_LEVEL_MAC LOG_LEVEL_WARN
