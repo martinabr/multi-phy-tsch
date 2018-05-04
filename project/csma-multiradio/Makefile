@@ -2,7 +2,9 @@ CONTIKI_PROJECT = csma-multiradio
 all: $(CONTIKI_PROJECT)
 
 TARGET ?= zoul
+ifeq ($(TARGET),zoul)
 BOARD ?= firefly
+endif
 
 CONTIKI = ../..
 MAKE_NET = MAKE_NET_NULLNET
