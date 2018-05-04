@@ -68,8 +68,6 @@ WORKDIR                 ${HOME}
 RUN echo "#!/bin/bash\nant -Dbasedir=${COOJA} -f ${COOJA}/build.xml run" > ${HOME}/cooja && \
   chmod +x ${HOME}/cooja
 
-<<<<<<< HEAD
-=======
 # Install coap-cli
 RUN sudo apt-get install -y npm \
   && sudo apt-get clean \
@@ -90,32 +88,18 @@ RUN git clone https://github.com/renode/renode.git \
   && ./build.sh
 ENV PATH="${HOME}/renode:${PATH}"
 
->>>>>>> origin/develop
 # Optional: download Contiki-NG and pre-compile Cooja.
 # Else, use a Docker bind mount to share the repo with the host.
 # Docker run option:
 # -v <HOST_CONTIKI_NG_ABS_PATH>:/home/user/contiki-ng
-<<<<<<< HEAD
-#RUN git clone --recursive https://github.com/contiki-ng/contiki-ng.git ${CONTIKI_NG}
-#RUN ant -q -f ${CONTIKI_NG}/tools/cooja/build.xml jar
-
-# Enable IPv6 -- must be done at runtime, not in Dockerfile
-#RUN sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
-=======
 RUN git clone --recursive https://github.com/contiki-ng/contiki-ng.git ${CONTIKI_NG}
 RUN ant -q -f ${CONTIKI_NG}/tools/cooja/build.xml jar
->>>>>>> origin/develop
 
 # Working directory
 WORKDIR ${CONTIKI_NG}
 
-<<<<<<< HEAD
-# Start a bash
-CMD bash
-=======
 # Enable IPv6 -- must be done at runtime, hence added to .profile
 RUN echo "sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0 > /dev/null" >> ${HOME}/.profile
 
 # Start a bash
 CMD bash --login
->>>>>>> origin/develop
