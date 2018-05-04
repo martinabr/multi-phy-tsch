@@ -1129,7 +1129,6 @@ tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
   last_sync_asn = tsch_current_asn;
   last_sync_time = clock_time();
   current_link = NULL;
-  printf("TSCH: tsch_slot_operation_sync %u %u\n", (unsigned)next_slot_start, (unsigned)RTIMER_NOW());
 }
 /*---------------------------------------------------------------------------*/
 /** @} */
