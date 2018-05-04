@@ -70,8 +70,13 @@ extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
 extern const struct radio_driver cc1200_driver;
 extern const struct radio_driver cc2538_rf_driver;
 
+#if TABLETOP_TEST
+#define NNODES    2
+#define SFLEN     19
+#else
 #define NNODES    25
 #define SFLEN     157
+#endif
 
 #if (NNODES+1)*6 > SFLEN
 #error SFLEN too short

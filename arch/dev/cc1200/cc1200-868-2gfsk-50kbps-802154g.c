@@ -57,7 +57,11 @@
 /* The minimum channel */
 #define RF_CFG_MIN_CHANNEL              0
 /* The maximum channel */
+#if TABLETOP_TEST
+#define RF_CFG_MAX_CHANNEL              1
+#else
 #define RF_CFG_MAX_CHANNEL              33
+#endif
 /* The maximum output power in dBm */
 #define RF_CFG_MAX_TXPOWER              CC1200_CONST_TX_POWER_MAX
 /* The carrier sense level used for CCA in dBm */
