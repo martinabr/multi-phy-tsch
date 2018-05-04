@@ -260,6 +260,8 @@ static const cc1200_rf_cfg_t *current_rf_config = &CC1200_RF_CFG;
 #define RF_UPDATE_CHANNEL               0x10
 /* SPI was locked when calling RX interrupt, let the pollhandler do the job */
 #define RF_POLL_RX_INTERRUPT            0x20
+/* Ongoing reception */
+#define RF_RX_ONGOING                   0x40
 /* Force calibration in case we don't use CC1200 AUTOCAL + timeout */
 #if !CC1200_AUTOCAL
 #if CC1200_CAL_TIMEOUT_SECONDS
@@ -1116,6 +1118,7 @@ on(void)
     RF_ASSERT((cc1200_arch_gpio0_read_pin() == 0));
     cc1200_arch_spi_deselect();
 
+    rf_flags = RF_INITIALIZED;
     rf_flags |= RF_ON;
 
     /* Radio is IDLE now, re-configure GPIO0 (modified inside off()) */
@@ -2360,15 +2363,15 @@ cc1200_rx_interrupt(void)
    * or at the end of the packet (GPIO0 falling edge).
    */
 #if CC1200_USE_GPIO2
- static int is_receiving = 0;
   int gpio2 = cc1200_arch_gpio2_read_pin();
-  if(is_receiving == 0 && gpio2 > 0) {
-    is_receiving = 1;
+  int gpio0 = cc1200_arch_gpio0_read_pin();
+  if((rf_flags & RF_RX_ONGOING) == 0 && gpio2 > 0) {
+    rf_flags |= RF_RX_ONGOING;
     sfd_timestamp = RTIMER_NOW();
   }
-   if(gpio2 == 0) {
-     is_receiving = 0;
-   }
+  if(gpio0 == 0) {
+    rf_flags &= ~RF_RX_ONGOING;
+  }
 #endif
 
   if(SPI_IS_LOCKED()) {
