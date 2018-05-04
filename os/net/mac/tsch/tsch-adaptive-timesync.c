@@ -109,7 +109,7 @@ timesync_learn_drift_ticks(uint32_t time_delta_asn, int32_t drift_ticks)
 
   TSCH_LOG_ADD(tsch_log_message,
       snprintf(log->message, sizeof(log->message),
-          "drift %ld", tsch_adaptive_timesync_get_drift_ppm()));
+          "drift %ld ppm", tsch_adaptive_timesync_get_drift_ppm()));
 }
 /*---------------------------------------------------------------------------*/
 /* Either reset or update the neighbor's drift */
