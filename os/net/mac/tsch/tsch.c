@@ -643,7 +643,8 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
 #endif /* TSCH_INIT_SCHEDULE_FROM_EB */
 
 #if TSCH_CONF_SYNC_WITH_LOWER_NODE_ID
-    if(nodeid_from_linkaddr((linkaddr_t *)&frame.src_addr) >= node_id) {
+    int nbr_id = nodeid_from_linkaddr((linkaddr_t *)&frame.src_addr);
+    if(nbr_id == 0 || nbr_id >= node_id) {
       return 0;
     }
 #endif

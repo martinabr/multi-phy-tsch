@@ -591,7 +591,8 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
               /* The radio driver should return 0 if no valid packets are in the rx buffer */
               if(ack_len > 0) {
 #if TSCH_CONF_SYNC_WITH_LOWER_NODE_ID
-                is_time_source = nodeid_from_linkaddr(queuebuf_addr(current_packet->qb, PACKETBUF_ADDR_RECEIVER)) < node_id;
+                int nbr_id = nodeid_from_linkaddr(queuebuf_addr(current_packet->qb, PACKETBUF_ADDR_RECEIVER));
+                is_time_source = nbr_id > 0 && nbr_id < node_id;
 #else
                 is_time_source = current_neighbor != NULL && current_neighbor->is_time_source;
 #endif
@@ -877,7 +878,8 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
             /* If the sender is a time source, proceed to clock drift compensation */
             n = tsch_queue_get_nbr(&source_address);
 #if TSCH_CONF_SYNC_WITH_LOWER_NODE_ID
-            is_time_source = nodeid_from_linkaddr(&source_address) < node_id;
+            int nbr_id = nodeid_from_linkaddr(&source_address);
+            is_time_source = nbr_id > 0 && nbr_id < node_id;
 #else
             is_time_source = n != NULL && n->is_time_source;
 #endif
