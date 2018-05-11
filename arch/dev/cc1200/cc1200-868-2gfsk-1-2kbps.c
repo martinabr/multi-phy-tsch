@@ -61,8 +61,9 @@
 #define RF_CFG_MAX_TXPOWER              CC1200_CONST_TX_POWER_MAX
 /* The carrier sense level used for CCA in dBm */
 #define RF_CFG_CCA_THRESHOLD            (-91)
-/* The RSSI offset in dBm */
-#define RF_CFG_RSSI_OFFSET              (-99)
+/* The RSSI offset in dBm. -81, not -99, because this is based on 50kbps
+ but * at slower datarate, not the smartRF default 1.2 kbps. */
+#define RF_CFG_RSSI_OFFSET              (-81)
 /*---------------------------------------------------------------------------*/
 static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 1.2 kbps";
 /*---------------------------------------------------------------------------*/
