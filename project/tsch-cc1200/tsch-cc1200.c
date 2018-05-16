@@ -90,8 +90,6 @@ AUTOSTART_PROCESSES(&cc1200_demo_process);
 PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
   static uint32_t count = 0;
-  // struct tsch_slotframe *sf;
-  // int i;
 
   PROCESS_BEGIN();
 
@@ -100,22 +98,6 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   nullnet_len = sizeof(count) + 8 + 93; /* Add 8 bytes to match the EB len
                                             Add 8+93 to macth max frame len */
   nullnet_set_input_callback(input_callback);
-
-  /* Create TSCH schedule */
-  // sf = tsch_schedule_add_slotframe(0, 5);
-  // sf->cc1200_config = &CC1200_CONF_RF_CFG;
-  // tsch_schedule_add_link(sf,
-  //      LINK_OPTION_TX,
-  //      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-  //      node_id - 1, 0);
-  // for(i = 0; i < 25; i++) {
-  //   if(i != node_id - 1) {
-  //    tsch_schedule_add_link(sf,
-  //        LINK_OPTION_TIME_KEEPING | LINK_OPTION_RX,
-  //        LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-  //        i, 0);
-  //   }
-  // }
 
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
