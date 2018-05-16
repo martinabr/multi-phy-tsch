@@ -70,6 +70,9 @@
  */
 static struct packetbuf_attr eackbuf_attrs[PACKETBUF_NUM_ATTRS];
 
+/* The offset of the frame pending bit flag within the first byte of FCF */
+#define IEEE802154_FRAME_PENDING_BIT_OFFSET 4
+
 /*---------------------------------------------------------------------------*/
 static int
 tsch_packet_eackbuf_set_attr(uint8_t type, const packetbuf_attr_t val)
@@ -395,8 +398,7 @@ tsch_packet_update_eb(uint8_t *buf, int buf_size, uint8_t tsch_sync_ie_offset)
   struct ieee802154_ies ies;
   ies.ie_asn = tsch_current_asn;
   ies.ie_join_priority = tsch_join_priority;
-  frame80215e_create_ie_tsch_synchronization(buf+tsch_sync_ie_offset, buf_size-tsch_sync_ie_offset, &ies);
-  return 1;
+  return frame80215e_create_ie_tsch_synchronization(buf+tsch_sync_ie_offset, buf_size-tsch_sync_ie_offset, &ies) != -1;
 }
 /*---------------------------------------------------------------------------*/
 /* Parse a IEEE 802.15.4e TSCH Enhanced Beacon (EB) */
@@ -463,6 +465,20 @@ tsch_packet_parse_eb(const uint8_t *buf, int buf_size,
   }
 
   return curr_len;
+}
+/*---------------------------------------------------------------------------*/
+/* Set frame pending bit in a packet (whose header was already build) */
+void
+tsch_packet_set_frame_pending(uint8_t *buf, int buf_size)
+{
+  buf[0] |= (1 << IEEE802154_FRAME_PENDING_BIT_OFFSET);
+}
+/*---------------------------------------------------------------------------*/
+/* Get frame pending bit from a packet */
+int
+tsch_packet_get_frame_pending(uint8_t *buf, int buf_size)
+{
+  return (buf[0] >> IEEE802154_FRAME_PENDING_BIT_OFFSET) & 1;
 }
 /*---------------------------------------------------------------------------*/
 /** @} */

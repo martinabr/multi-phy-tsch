@@ -156,11 +156,15 @@ log_lladdr_compact(const linkaddr_t *lladdr)
   if(lladdr == NULL || linkaddr_cmp(lladdr, &linkaddr_null)) {
     LOG_OUTPUT("LL-NULL");
   } else {
+#if LINKADDR_SIZE == 8
 #if BUILD_WITH_DEPLOYMENT
     LOG_OUTPUT("LL-%04u", nodeid_from_linkaddr(lladdr));
 #else /* BUILD_WITH_DEPLOYMENT */
     LOG_OUTPUT("LL-%04x", UIP_HTONS(lladdr->u16[LINKADDR_SIZE/2-1]));
 #endif /* BUILD_WITH_DEPLOYMENT */
+#elif LINKADDR_SIZE == 2
+    LOG_OUTPUT("LL-%04x", UIP_HTONS(lladdr->u16));
+#endif
   }
 }
 /*---------------------------------------------------------------------------*/
