@@ -84,7 +84,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 8 kbps";
 #define CC1200_TSCH_DEFAULT_TS_MAX_ACK          10000 /* 7+1+3 bytes*/
 #define CC1200_TSCH_DEFAULT_TS_MAX_TX          130000 /* 126+1+3 bytes */
 
-#define CC1200_TSCH_DEFAULT_SLACK_TIME            700
+#define CC1200_TSCH_DEFAULT_SLACK_TIME            500
 #define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH  \
                                                   ( CC1200_TSCH_DEFAULT_TS_TX_OFFSET \
                                                   + CC1200_TSCH_DEFAULT_TS_MAX_TX \
