@@ -175,10 +175,11 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp = {
   .tx_pkt_lifetime = (RTIMER_SECOND),
   .tx_rx_turnaround = (RTIMER_SECOND / 100),
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 6667usec per byte = 33335 usec */
-  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(33335 + 16365)),
+  /* Includes time to completion of "Wait for TX to start" if cc1200.c: 397 usec */
+  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(33335 + 397 + 2634)),
   .delay_before_rx = (unsigned)US_TO_RTIMERTICKS(400),
-  .delay_before_detect = (int)-US_TO_RTIMERTICKS(13334 - 1800), /* Two bytes.
-  Offset by -1800. Measured by looking at first EDR after association.
+  .delay_before_detect = (int)US_TO_RTIMERTICKS(1800),
+  /* Offset of 1800. Measured by looking at first EDR after association.
   Tells us the offset because association is done on SFD timestamp,
   while TSCH operation is done in rtimer measured from CPU  */
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,

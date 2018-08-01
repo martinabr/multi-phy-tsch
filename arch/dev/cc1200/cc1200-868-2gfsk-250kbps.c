@@ -175,9 +175,10 @@ const cc1200_rf_cfg_t cc1200_868_2gfsk_250kbps = {
   .tx_pkt_lifetime = (RTIMER_SECOND / 20),
   .tx_rx_turnaround = (RTIMER_SECOND / 100),
   /* Includes 3 Bytes preamble + 2 Bytes SFD, at 32usec per byte = 160 usec */
-  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(160+670)),
+  /* Includes time to completion of "Wait for TX to start" if cc1200.c: 397 usec */
+  .delay_before_tx = ((unsigned)US_TO_RTIMERTICKS(160 + 397 + 209)),
   .delay_before_rx = (unsigned)US_TO_RTIMERTICKS(400),
-  .delay_before_detect = (int)-US_TO_RTIMERTICKS(64), /* Two bytes */
+  .delay_before_detect = 0,
   .chan_center_freq0 = RF_CFG_CHAN_CENTER_F0,
   .chan_spacing = RF_CFG_CHAN_SPACING,
   .min_channel = RF_CFG_MIN_CHANNEL,

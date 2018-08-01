@@ -2367,7 +2367,8 @@ cc1200_rx_interrupt(void)
   int gpio0 = cc1200_arch_gpio0_read_pin();
   if((rf_flags & RF_RX_ONGOING) == 0 && gpio2 > 0) {
     rf_flags |= RF_RX_ONGOING;
-    sfd_timestamp = RTIMER_NOW();
+    /* This is triggered two bytes after this end of SFD */
+    sfd_timestamp = RTIMER_NOW() - US_TO_RTIMERTICKS_64(2 * radio_byte_air_time());
   }
   if(gpio0 == 0) {
     rf_flags &= ~RF_RX_ONGOING;
