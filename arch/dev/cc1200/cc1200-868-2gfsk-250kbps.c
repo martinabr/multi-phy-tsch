@@ -81,10 +81,10 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 250 kbps";
 #define CC1200_TSCH_DEFAULT_TS_RX_WAIT           (CC1200_TSCH_PREAMBLE_LENGTH + CC1200_TSCH_CONF_RX_WAIT)
 #define CC1200_TSCH_DEFAULT_TS_ACK_WAIT          (CC1200_TSCH_PREAMBLE_LENGTH + CC1200_TSCH_CONF_RX_ACK_WAIT)
 #define CC1200_TSCH_DEFAULT_TS_RX_TX              192
-#define CC1200_TSCH_DEFAULT_TS_MAX_ACK           1760 /* 7+1+3 bytes at 50 kbps */
-#define CC1200_TSCH_DEFAULT_TS_MAX_TX           20800 /* 126+1+3 bytes at 50 kbps */
+#define CC1200_TSCH_DEFAULT_TS_MAX_ACK            352 /* 7+1+3 bytes at 250 kbps */
+#define CC1200_TSCH_DEFAULT_TS_MAX_TX            4160 /* 126+1+3 bytes at 250 kbps */
 
-#define CC1200_TSCH_DEFAULT_SLACK_TIME             0
+#define CC1200_TSCH_DEFAULT_SLACK_TIME            700
 #define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH  \
                                                   ( CC1200_TSCH_DEFAULT_TS_TX_OFFSET \
                                                   + CC1200_TSCH_DEFAULT_TS_MAX_TX \
