@@ -87,7 +87,7 @@ static const char rf_cfg_descriptor[] = "868MHz 2-GFSK 1.2 kbps (short packets)"
 //#define CC1200_TSCH_DEFAULT_TS_MAX_TX          866667 /* 126+1+3 bytes */
 #define CC1200_TSCH_DEFAULT_TS_MAX_TX          200010 /* 26+1+3 bytes */
 
-#define CC1200_TSCH_DEFAULT_SLACK_TIME             0
+#define CC1200_TSCH_DEFAULT_SLACK_TIME            700
 #define CC1200_TSCH_DEFAULT_TS_TIMESLOT_LENGTH  \
                                                   ( CC1200_TSCH_DEFAULT_TS_TX_OFFSET \
                                                   + CC1200_TSCH_DEFAULT_TS_MAX_TX \
