@@ -14,6 +14,7 @@ import matplotlib as mpl
 import pickle
 
 NNODES = 25
+radioToStr = ["1.2 kbps", "8 kbps", "50 kbps", "250 kbps", "1000 kbps", "250 kbps @ 2.4 GHz"]
 
 pd.set_option('display.max_rows', 48)
 pd.set_option('display.width', None)
@@ -180,6 +181,25 @@ def getTimeSeries(df, radio):
     #tsNoise.columns = tsNoise.columns.droplevel()
     return tsStats
 
+def doBoxPlot(data, yaxis, xaxis, dir, ylabel, xlabel):
+    fig, ax = plt.subplots(2, 3, figsize=(12,4), sharey=True)
+    data.boxplot(column=yaxis, by=xaxis, ax=ax)
+    fig.suptitle("")
+    plt.subplots_adjust(hspace=0.5, wspace=0.1)
+    plt.grid(True)
+    allAxes = fig.get_axes()
+    for i, currAx in enumerate(allAxes):
+        currAx.set_title(radioToStr[int(currAx.get_title())])
+        currAx.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+        currAx.xaxis.set_major_locator(plt.AutoLocator())
+        if i > 2:
+            currAx.set_xlabel(xlabel)
+        else:
+            currAx.xaxis.label.set_visible(False)
+        if i % 3 == 0:
+            currAx.set_ylabel(ylabel)
+    fig.savefig(os.path.join(dir, "%s-per%s.pdf" %(yaxis, xaxis)), bbox_inches='tight')
+
 def main():
     force = False
 
@@ -233,34 +253,24 @@ def main():
     print("Plotting")
 
     # Noise
-    dfNoise.groupby("radio").boxplot(column='noise', by='channel')
-    plt.savefig(os.path.join(dir, "noise-perchannel.pdf"))
-    dfNoise.groupby("radio").boxplot(column='noise', by='node')
-    plt.savefig(os.path.join(dir, "noise-pernode.pdf"))
+    doBoxPlot(dfNoise.groupby("radio"), 'noise', 'channel', dir, "Noise (dBm)", "Channel")
+    doBoxPlot(dfNoise.groupby("radio"), 'noise', 'node', dir, "Noise dBm)", "Node ID")
 
     # Rx RSSI
-    dfComm.groupby("radio").boxplot(column='rssi', by='channel')
-    plt.savefig(os.path.join(dir, "rssi-perchannel.pdf"))
-    dfComm.groupby("radio").boxplot(column='rssi', by='source')
-    plt.savefig(os.path.join(dir, "rssi-persource.pdf"))
-    dfComm.groupby("radio").boxplot(column='rssi', by='destination')
-    plt.savefig(os.path.join(dir, "rssi-perdestination.pdf"))
+    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'channel', dir, "RSSI (dBm)", "Channel")
+    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'source', dir, "RSSI (dBm)", "Node ID")
+    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'destination', dir, "RSSI (dBm)", "Node ID")
 
     # Reach
-    allStats["perSrc"].groupby("radio").boxplot(column='reach', by='channel')
-    plt.savefig(os.path.join(dir, "reach-perchannel.pdf"))
-    allStats["perSrc"].groupby("radio").boxplot(column='reach', by='source')
-    plt.savefig(os.path.join(dir, "reach-persource.pdf"))
-    allStats["perDst"].groupby("radio").boxplot(column='reach', by='destination')
-    plt.savefig(os.path.join(dir, "reach-perdestination.pdf"))
+    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'channel', dir, "Reach (# nodes)", "Channel")
+    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'source', dir, "Reach (# nodes)", "Node ID")
+    doBoxPlot(allStats["perDst"].groupby("radio"), 'reach', 'destination', dir, "Reach (# nodes)", "Node ID")
 
     # Link asymmetry
-    allStats["perLink"].groupby("radio").boxplot(column='asymmetry', by='channel')
-    plt.savefig(os.path.join(dir, "asymmetry-perchannel.pdf"))
-    allStats["perLink"].groupby("radio").boxplot(column='asymmetry', by='source')
-    plt.savefig(os.path.join(dir, "asymmetry-persource.pdf"))
-    allStats["perLink"].groupby("radio").boxplot(column='asymmetry', by='destination')
-    plt.savefig(os.path.join(dir, "asymmetry-perdestination.pdf"))
+    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'channel', dir, "Asymmetry (ratio)", "Channel")
+    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'source', dir, "Asymmetry (ratio)", "Node ID")
+    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'destination', dir, "Asymmetry (ratio)", "Node ID")
+
 
     # Timelines
     for radio in range(6):
