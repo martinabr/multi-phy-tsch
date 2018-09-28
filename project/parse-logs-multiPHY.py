@@ -181,12 +181,14 @@ def getTimeSeries(df, radio):
     #tsNoise.columns = tsNoise.columns.droplevel()
     return tsStats
 
-def doBoxPlot(data, yaxis, xaxis, dir, ylabel, xlabel):
+def doBoxPlot(data, yaxis, xaxis, dir, ylabel, xlabel, ymin=None):
     fig, ax = plt.subplots(2, 3, figsize=(12,4), sharey=True)
     data.boxplot(column=yaxis, by=xaxis, ax=ax)
     fig.suptitle("")
     plt.subplots_adjust(hspace=0.5, wspace=0.1)
     plt.grid(True)
+    if ymin != None:
+        plt.ylim(bottom=ymin)
     allAxes = fig.get_axes()
     for i, currAx in enumerate(allAxes):
         currAx.set_title(radioToStr[int(currAx.get_title())])
@@ -253,23 +255,23 @@ def main():
     print("Plotting")
 
     # Noise
-    doBoxPlot(dfNoise.groupby("radio"), 'noise', 'channel', dir, "Noise (dBm)", "Channel")
-    doBoxPlot(dfNoise.groupby("radio"), 'noise', 'node', dir, "Noise dBm)", "Node ID")
+    #doBoxPlot(dfNoise.groupby("radio"), 'noise', 'channel', dir, "Noise (dBm)", "Channel")
+    #doBoxPlot(dfNoise.groupby("radio"), 'noise', 'node', dir, "Noise dBm)", "Node ID")
 
     # Rx RSSI
-    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'channel', dir, "RSSI (dBm)", "Channel")
-    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'source', dir, "RSSI (dBm)", "Node ID")
-    doBoxPlot(dfComm.groupby("radio"), 'rssi', 'destination', dir, "RSSI (dBm)", "Node ID")
+    #doBoxPlot(dfComm.groupby("radio"), 'rssi', 'channel', dir, "RSSI (dBm)", "Channel")
+    #doBoxPlot(dfComm.groupby("radio"), 'rssi', 'source', dir, "RSSI (dBm)", "Node ID")
+    #doBoxPlot(dfComm.groupby("radio"), 'rssi', 'destination', dir, "RSSI (dBm)", "Node ID")
 
     # Reach
-    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'channel', dir, "Reach (# nodes)", "Channel")
-    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'source', dir, "Reach (# nodes)", "Node ID")
-    doBoxPlot(allStats["perDst"].groupby("radio"), 'reach', 'destination', dir, "Reach (# nodes)", "Node ID")
+    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'channel', dir, "Reach (# nodes)", "Channel", ymin=0)
+    doBoxPlot(allStats["perSrc"].groupby("radio"), 'reach', 'source', dir, "Reach (# nodes)", "Node ID", ymin=0)
+    doBoxPlot(allStats["perDst"].groupby("radio"), 'reach', 'destination', dir, "Reach (# nodes)", "Node ID", ymin=0)
 
     # Link asymmetry
-    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'channel', dir, "Asymmetry (ratio)", "Channel")
-    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'source', dir, "Asymmetry (ratio)", "Node ID")
-    doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'destination', dir, "Asymmetry (ratio)", "Node ID")
+    #doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'channel', dir, "Asymmetry (ratio)", "Channel")
+    #doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'source', dir, "Asymmetry (ratio)", "Node ID")
+    #doBoxPlot(allStats["perLink"].groupby("radio"), 'asymmetry', 'destination', dir, "Asymmetry (ratio)", "Node ID")
 
 
     # Timelines
