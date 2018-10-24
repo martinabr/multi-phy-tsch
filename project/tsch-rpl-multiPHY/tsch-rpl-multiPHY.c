@@ -47,6 +47,7 @@
 /* Same interval for data packets as we have for EBs */
 #define LOOP_INTERVAL       (TSCH_CONF_EB_PERIOD)
 #define TSCH_COORDINATOR_ID 1
+#define RPL_ROOT_ID TSCH_COORDINATOR_ID
 
 #include "cc1200-rf-cfg.h"
 extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
@@ -61,9 +62,6 @@ extern const struct radio_driver cc1200_driver;
 #else
 #define NNODES    25
 #endif
-
-#define SF1LEN     1
-#define SF2LEN     1
 
 /*---------------------------------------------------------------------------*/
 //static struct etimer et;
@@ -90,25 +88,32 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 
   PROCESS_BEGIN();
 
-  sf0 = tsch_schedule_add_slotframe(0, SF1LEN);
+  sf0 = tsch_schedule_add_slotframe(0, 2);
   sf0->cc1200_config = &CC1200_CONF_RF_CFG;
+  sf0->radio = &cc1200_driver;
 
   tsch_schedule_add_link(sf0,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
       LINK_TYPE_ADVERTISING_ONLY, &tsch_broadcast_address,
       0, 0);
 
-  sf1 = tsch_schedule_add_slotframe(1, SF2LEN);
-  sf1->cc1200_config = &cc1200_868_4gfsk_1000kbps;
+  sf1 = tsch_schedule_add_slotframe(1, 2);
+  sf1->cc1200_config = &cc1200_868_2gfsk_50kbps_802154g;
+  sf1->radio = &cc1200_driver;
 
   tsch_schedule_add_link(sf1,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED),
       LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      0, 0);
+      1, 0);
 
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
   NETSTACK_MAC.on();
+
+  /* Initialize RPL root */
+  if(node_id == RPL_ROOT_ID) {
+    NETSTACK_ROUTING.root_start();
+  }
 
   PROCESS_END();
 }
