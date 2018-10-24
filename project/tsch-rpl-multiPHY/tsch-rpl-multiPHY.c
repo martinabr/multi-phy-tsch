@@ -63,19 +63,14 @@ extern const struct radio_driver cc1200_driver;
 #define NNODES    25
 #endif
 
+#define SFLEN 67
+#define SLOT1_OFFSET 33
+
 /*---------------------------------------------------------------------------*/
-//static struct etimer et;
-/*---------------------------------------------------------------------------*/
-// void
-// input_callback(const void *data, uint16_t len,
-//   const linkaddr_t *src, const linkaddr_t *dest)
-// {
-//   LOG_INFO("Received seq %u from ", (unsigned)(*(uint32_t *)data));
-//   LOG_INFO_LLADDR(src);
-//   LOG_INFO_(" rssi %d\n",
-//     (int8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI)
-//   );
-// }
+void
+rpl_parent_switch_do_nothing(rpl_parent_t *old, rpl_parent_t *new)
+{
+}
 /*---------------------------------------------------------------------------*/
 PROCESS(cc1200_demo_process, "cc1200 demo process");
 AUTOSTART_PROCESSES(&cc1200_demo_process);
@@ -85,10 +80,11 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
   struct tsch_slotframe *sf0;
   struct tsch_slotframe *sf1;
+  int i;
 
   PROCESS_BEGIN();
 
-  sf0 = tsch_schedule_add_slotframe(0, 2);
+  sf0 = tsch_schedule_add_slotframe(0, SFLEN);
   sf0->cc1200_config = &CC1200_CONF_RF_CFG;
   sf0->radio = &cc1200_driver;
 
@@ -97,14 +93,16 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
       LINK_TYPE_ADVERTISING_ONLY, &tsch_broadcast_address,
       0, 0);
 
-  sf1 = tsch_schedule_add_slotframe(1, 2);
+  sf1 = tsch_schedule_add_slotframe(1, SFLEN);
   sf1->cc1200_config = &cc1200_868_2gfsk_50kbps_802154g;
   sf1->radio = &cc1200_driver;
 
-  tsch_schedule_add_link(sf1,
+  for(i=0; i<SLOT1_OFFSET; i++) {
+    tsch_schedule_add_link(sf1,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED),
       LINK_TYPE_NORMAL, &tsch_broadcast_address,
-      1, 0);
+      SLOT1_OFFSET + i, 0);
+  }
 
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);

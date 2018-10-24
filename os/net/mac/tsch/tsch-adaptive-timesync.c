@@ -46,6 +46,8 @@
 #include "net/mac/tsch/tsch.h"
 #include <stdio.h>
 
+extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+
 #if TSCH_ADAPTIVE_TIMESYNC
 
 /* Estimated drift of the time-source neighbor. Can be negative.

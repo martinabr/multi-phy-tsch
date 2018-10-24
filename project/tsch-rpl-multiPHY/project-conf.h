@@ -61,12 +61,13 @@
 #define TSCH_CONF_SCANNING_RADIO cc1200_driver /* used with CC1200_CONF_RF_CFG */
 #define CC1200_CONF_RF_CFG cc1200_868_2gfsk_1_2kbps
 #define TSCH_CONF_SCANNING_CC1200_CFG CC1200_CONF_RF_CFG /* EBs only on 1.2 */
-#define TSCH_CONF_MULTIPHY_DEFAULT_TIMING CC1200_CONF_RF_CFG.tsch_timing
+#define TSCH_CONF_MULTIPHY_DEFAULT_TIMING cc1200_868_2gfsk_50kbps_802154g.tsch_timing
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_50kbps_802154g
 //#define CC1200_CONF_RF_CFG cc1200_868_2gfsk_250kbps
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
+#define RPL_CALLBACK_PARENT_SWITCH rpl_parent_switch_do_nothing
 /* Make room in timeslot template for radio reconfig */
 #define TSCH_WITH_CC1200_RECONF 1600
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
@@ -74,7 +75,7 @@
 /* No 6TiSCH minimal schedule */
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0
 /* We will need more than 32 links */
-#define TSCH_SCHEDULE_CONF_MAX_LINKS 10
+#define TSCH_SCHEDULE_CONF_MAX_LINKS 35
 #define TSCH_SCHEDULE_CONF_MAX_SLOTFRAMES 6
 #define TSCH_CONF_SYNC_WITH_LOWER_NODE_ID 1
 #define EB_ONLY_COORDINATOR 1
