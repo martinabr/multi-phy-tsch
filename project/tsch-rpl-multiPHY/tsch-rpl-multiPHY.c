@@ -46,8 +46,6 @@
 
 /* Same interval for data packets as we have for EBs */
 #define LOOP_INTERVAL       (TSCH_CONF_EB_PERIOD)
-#define TSCH_COORDINATOR_ID 1
-#define RPL_ROOT_ID TSCH_COORDINATOR_ID
 
 #include "cc1200-rf-cfg.h"
 extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
@@ -58,10 +56,12 @@ extern const cc1200_rf_cfg_t cc1200_868_2gfsk_1_2kbps_sp;
 extern const struct radio_driver cc1200_driver;
 
 #if TABLETOP_TEST
-#define NNODES    2
+#define TSCH_COORDINATOR_ID 1
 #else
-#define NNODES    25
+#define TSCH_COORDINATOR_ID 12
 #endif
+
+#define RPL_ROOT_ID TSCH_COORDINATOR_ID
 
 #define SFLEN 67
 #define SLOT1_OFFSET 33

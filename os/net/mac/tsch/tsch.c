@@ -759,11 +759,11 @@ PT_THREAD(tsch_scan(struct pt *pt))
     /* Turn radio on and wait for EB */
     NETSTACK_RADIO.on();
 
+    t0 = RTIMER_NOW();
     is_packet_pending = NETSTACK_RADIO.pending_packet();
     if(!is_packet_pending && NETSTACK_RADIO.receiving_packet()) {
       /* If we are currently receiving a packet, wait until end of reception */
-      t0 = RTIMER_NOW();
-      BUSYWAIT_UNTIL_ABS((is_packet_pending = NETSTACK_RADIO.pending_packet()), t0, RTIMER_SECOND / 100);
+      BUSYWAIT_UNTIL_ABS((is_packet_pending = NETSTACK_RADIO.pending_packet()), t0, RTIMER_SECOND / 4);
     }
 
     if(is_packet_pending) {
@@ -779,8 +779,14 @@ PT_THREAD(tsch_scan(struct pt *pt))
       LOG_INFO("scan: received packet (%u bytes) on channel %u\n", input_eb.len, current_channel);
 
       /* Sanity-check the timestamp */
-      if(ABS(RTIMER_CLOCK_DIFF(t0, t1)) < tsch_timing[tsch_ts_timeslot_length]) {
+#ifndef MIN_JOIN_TIME_DELTA // HACK
+#define MIN_JOIN_TIME_DELTA 0
+#endif
+      if(ABS(RTIMER_CLOCK_DIFF(t0, t1)) > MIN_JOIN_TIME_DELTA && ABS(RTIMER_CLOCK_DIFF(t0, t1)) < US_TO_RTIMERTICKS_64(500000)) {
         tsch_associate(&input_eb, t0);
+        if(tsch_is_associated) {
+          LOG_WARN("scan: associated, timestamp delta %u\n", (unsigned)(t1-t0));
+        }
       } else {
         LOG_WARN("scan: dropping packet, timestamp too far from current time %u %u\n",
           (unsigned)t0,

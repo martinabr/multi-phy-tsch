@@ -58,7 +58,7 @@
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 #define LOOP_INTERVAL       (8*CLOCK_SECOND)
-#define TSCH_COORDINATOR_ID 1
+#define TSCH_COORDINATOR_ID 12
 
 #include "cc1200-rf-cfg.h"
 extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
@@ -102,7 +102,7 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
 
-  etimer_set(&et, 2*CLOCK_SECOND);
+  etimer_set(&et, 10*CLOCK_SECOND);
   PROCESS_WAIT_UNTIL(etimer_expired(&et));
 
   NETSTACK_MAC.on();
@@ -114,8 +114,8 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
       if(ev == PROCESS_EVENT_TIMER) {
         linkaddr_t dest;
         linkaddr_from_nodeid(&dest, 1);
-        LOG_INFO("Sending seq %u\n", (unsigned)count);
-        NETSTACK_NETWORK.output(&dest);
+        // LOG_INFO("Sending seq %u\n", (unsigned)count);
+        // NETSTACK_NETWORK.output(&dest);
         count++;
         etimer_reset(&et);
       }
