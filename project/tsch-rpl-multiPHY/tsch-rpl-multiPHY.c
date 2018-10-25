@@ -80,9 +80,15 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
 {
   struct tsch_slotframe *sf0;
   struct tsch_slotframe *sf1;
+  static struct etimer et;
   int i;
 
   PROCESS_BEGIN();
+
+  LOG_INFO("Waiting 5 seconds before starting\n");
+  etimer_set(&et, 5*CLOCK_SECOND);
+  PROCESS_WAIT_UNTIL(etimer_expired(&et));
+  LOG_INFO("Starting\n");
 
   sf0 = tsch_schedule_add_slotframe(0, SFLEN);
   sf0->cc1200_config = &CC1200_CONF_RF_CFG;

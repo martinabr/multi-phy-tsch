@@ -48,7 +48,7 @@
 /* Log configuration */
 #include "sys/log.h"
 #define LOG_MODULE "IPv6 SR"
-#define LOG_LEVEL LOG_LEVEL_IPV6
+#define LOG_LEVEL LOG_LEVEL_INFO
 
 /* Total number of nodes */
 static int num_nodes;

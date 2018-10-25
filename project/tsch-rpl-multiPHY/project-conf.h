@@ -69,7 +69,11 @@
 //#define CC1200_CONF_RF_CFG cc1200_868_4gfsk_1000kbps
 #define ANTENNA_SW_SELECT_DEF_CONF  ANTENNA_SW_SELECT_SUBGHZ
 
+/* RPL */
 #define RPL_CALLBACK_PARENT_SWITCH rpl_parent_switch_do_nothing
+#define NBR_TABLE_CONF_MAX_NEIGHBORS 16
+#define NETSTACK_MAX_ROUTE_ENTRIES 25
+
 /* Make room in timeslot template for radio reconfig */
 #define TSCH_WITH_CC1200_RECONF 1600
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */

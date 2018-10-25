@@ -177,6 +177,8 @@ extern struct tsch_asn_divisor_t tsch_hopping_sequence_length;
 /* TSCH timeslot timing (in rtimer ticks) */
 extern rtimer_clock_t *tsch_timing;
 /* Statistics on the current session */
+extern int32_t min_drift_seen;
+extern int32_t max_drift_seen;
 extern unsigned long tx_count;
 extern unsigned long rx_count;
 extern unsigned long sync_count;

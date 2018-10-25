@@ -155,6 +155,8 @@ static clock_time_t tsch_current_ka_timeout;
 static struct ctimer keepalive_timer;
 
 /* Statistics on the current session */
+int32_t min_drift_seen;
+int32_t max_drift_seen;
 unsigned long tx_count;
 unsigned long rx_count;
 unsigned long sync_count;
@@ -670,6 +672,8 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
       tx_count = 0;
       rx_count = 0;
       sync_count = 0;
+      min_drift_seen = 0;
+      max_drift_seen = 0;
 
       /* Start sending keep-alives now that tsch_is_associated is set */
       tsch_schedule_keepalive();

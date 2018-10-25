@@ -143,13 +143,22 @@ new_dio_interval(void)
 #ifdef RPL_CALLBACK_NEW_DIO_INTERVAL
   RPL_CALLBACK_NEW_DIO_INTERVAL((CLOCK_SECOND * 1UL << curr_instance.dag.dio_intcurrent) / 1000);
 #endif /* RPL_CALLBACK_NEW_DIO_INTERVAL */
+
+  LOG_INFO("increment DIO timer: %u (%lu seconds)\n",
+    curr_instance.dag.dio_intcurrent,
+    (1UL << curr_instance.dag.dio_intcurrent) / 1000
+  );
 }
 /*---------------------------------------------------------------------------*/
 void
 rpl_timers_dio_reset(const char *str)
 {
   if(rpl_dag_ready_to_advertise()) {
-    LOG_INFO("reset DIO timer (%s)\n", str);
+    LOG_INFO("reset DIO timer (%s): %u (%lu seconds)\n",
+      str,
+      curr_instance.dag.dio_intcurrent,
+      (1UL << curr_instance.dag.dio_intcurrent) / 1000);
+
     if(!rpl_get_leaf_only()) {
         curr_instance.dag.dio_counter = 0;
         curr_instance.dag.dio_intcurrent = curr_instance.dio_intmin;
