@@ -37,6 +37,7 @@
 
 #include "contiki.h"
 #include "deployment.h"
+#include "net/ipv6/uip-ds6.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -130,5 +131,13 @@ linkaddr_from_nodeid(linkaddr_t *lladdr, uint16_t id)
     }
     curr++;
   }
+}
+/*---------------------------------------------------------------------------*/
+uint16_t
+nodeid_from_iid(const uip_ipaddr_t *ipaddr)
+{
+  const linkaddr_t lladdr;
+  uip_ds6_set_lladdr_from_iid((uip_lladdr_t *)&lladdr, ipaddr);
+  return nodeid_from_linkaddr(&lladdr);
 }
 /*---------------------------------------------------------------------------*/

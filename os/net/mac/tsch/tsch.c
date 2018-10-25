@@ -792,7 +792,7 @@ PT_THREAD(tsch_scan(struct pt *pt))
           LOG_WARN("scan: associated, timestamp delta %u\n", (unsigned)(t1-t0));
         }
       } else {
-        LOG_WARN("scan: dropping packet, timestamp too far from current time %u %u\n",
+        LOG_WARN("scan: dropping packet, timestamp too far/close from/to current time %u %u\n",
           (unsigned)t0,
           (unsigned)t1
       );

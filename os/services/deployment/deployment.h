@@ -49,5 +49,6 @@ uint16_t get_node_id(void);
 uint16_t nodeid_from_linkaddr(const linkaddr_t *addr);
 /* Sets an linkaddr from a link-layer address */
 void linkaddr_from_nodeid(linkaddr_t *lladdr, uint16_t id);
+uint16_t nodeid_from_iid(const uip_ipaddr_t *ipaddr);
 
 #endif /* DEPLOYMENT_H */

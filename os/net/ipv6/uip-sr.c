@@ -89,8 +89,8 @@ uip_sr_get_node(void *graph, const uip_ipaddr_t *addr)
   return NULL;
 }
 /*---------------------------------------------------------------------------*/
-int
-uip_sr_is_addr_reachable(void *graph, const uip_ipaddr_t *addr)
+static int
+get_hop_count(void *graph, const uip_ipaddr_t *addr)
 {
   int max_depth = UIP_SR_LINK_NUM;
   uip_ipaddr_t root_ipaddr;
@@ -105,7 +105,18 @@ uip_sr_is_addr_reachable(void *graph, const uip_ipaddr_t *addr)
     node = node->parent;
     max_depth--;
   }
-  return node != NULL && node == root_node;
+
+  if(node != NULL && node == root_node) {
+    return UIP_SR_LINK_NUM - max_depth;
+  } else {
+    return -1;
+  }
+}
+/*---------------------------------------------------------------------------*/
+int
+uip_sr_is_addr_reachable(void *graph, const uip_ipaddr_t *addr)
+{
+  return get_hop_count(graph, addr) != -1;
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -176,7 +187,8 @@ uip_sr_update_node(void *graph, const uip_ipaddr_t *child, const uip_ipaddr_t *p
   LOG_INFO_6ADDR(child);
   LOG_INFO_(", parent ");
   LOG_INFO_6ADDR(parent);
-  LOG_INFO_(", lifetime %u, num_nodes %u\n", (unsigned)lifetime, num_nodes);
+  LOG_INFO_(", lifetime %u, hop count %u, num_nodes %u\n",
+    (unsigned)lifetime, get_hop_count(graph, child), num_nodes);
 
   return child_node;
 }
