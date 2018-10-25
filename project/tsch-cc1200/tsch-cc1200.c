@@ -102,7 +102,7 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
   /* Initialize TSCH */
   tsch_set_coordinator(node_id == TSCH_COORDINATOR_ID);
 
-  etimer_set(&et, 10*CLOCK_SECOND);
+  etimer_set(&et, 5 * CLOCK_SECOND);
   PROCESS_WAIT_UNTIL(etimer_expired(&et));
 
   NETSTACK_MAC.on();

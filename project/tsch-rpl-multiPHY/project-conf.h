@@ -75,7 +75,8 @@
 #define NETSTACK_MAX_ROUTE_ENTRIES 25
 
 /* Make room in timeslot template for radio reconfig */
-#define TSCH_WITH_CC1200_RECONF 1600
+//#define TSCH_WITH_CC1200_RECONF 1600
+#define TSCH_WITH_CC1200_RECONF 3000
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 /* No 6TiSCH minimal schedule */
