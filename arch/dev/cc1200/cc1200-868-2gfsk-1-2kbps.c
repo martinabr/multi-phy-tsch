@@ -55,7 +55,7 @@
 #if TABLETOP_TEST
 #define RF_CFG_MAX_CHANNEL              1
 #else
-#define RF_CFG_MAX_CHANNEL              33
+#define RF_CFG_MAX_CHANNEL              3
 #endif
 /* The maximum output power in dBm */
 #define RF_CFG_MAX_TXPOWER              CC1200_CONST_TX_POWER_MAX

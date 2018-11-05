@@ -100,7 +100,7 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
       0, 0);
 
   sf1 = tsch_schedule_add_slotframe(1, SFLEN);
-  sf1->cc1200_config = &cc1200_868_2gfsk_50kbps_802154g;
+  sf1->cc1200_config = &cc1200_868_4gfsk_1000kbps;
   sf1->radio = &cc1200_driver;
 
   for(i=0; i<SLOT1_OFFSET; i++) {
