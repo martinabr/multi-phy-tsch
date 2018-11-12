@@ -58,12 +58,13 @@ extern const struct radio_driver cc1200_driver;
 #if TABLETOP_TEST
 #define TSCH_COORDINATOR_ID 1
 #else
-#define TSCH_COORDINATOR_ID 12
+#define TSCH_COORDINATOR_ID 18
 #endif
 
 #define RPL_ROOT_ID TSCH_COORDINATOR_ID
 
 #define SFLEN 67
+/* Number of slots in cfg2 equivalent to 1 slot in cfg1 */
 #define SLOT1_OFFSET 33
 
 /*---------------------------------------------------------------------------*/
@@ -100,7 +101,7 @@ PROCESS_THREAD(cc1200_demo_process, ev, data)
       0, 0);
 
   sf1 = tsch_schedule_add_slotframe(1, SFLEN);
-  sf1->cc1200_config = &cc1200_868_4gfsk_1000kbps;
+  sf1->cc1200_config = &CC1200_CONF_RF_CFG2;
   sf1->radio = &cc1200_driver;
 
   for(i=0; i<SLOT1_OFFSET; i++) {

@@ -49,13 +49,17 @@
 #define RF_CFG_CHAN_CENTER_F0           863125
 /* Channel spacing in Hz */
 #define RF_CFG_CHAN_SPACING             200000
-/* The minimum channel */
-#define RF_CFG_MIN_CHANNEL              0
-/* The maximum channel */
+
 #if TABLETOP_TEST
+/* The min and max channels */
+#define RF_CFG_MIN_CHANNEL              0
 #define RF_CFG_MAX_CHANNEL              1
+#elif TESTBED_TEST
+#define RF_CFG_MIN_CHANNEL              0
+#define RF_CFG_MAX_CHANNEL              2
 #else
-#define RF_CFG_MAX_CHANNEL              3
+#define RF_CFG_MIN_CHANNEL              0
+#define RF_CFG_MAX_CHANNEL              33
 #endif
 /* The maximum output power in dBm */
 #define RF_CFG_MAX_TXPOWER              CC1200_CONST_TX_POWER_MAX

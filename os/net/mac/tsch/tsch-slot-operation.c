@@ -58,6 +58,7 @@
 #endif /* CONTIKI_TARGET_COOJA */
 
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
 
 #include "dev/multiradio.h"
 #include "deployment.h"

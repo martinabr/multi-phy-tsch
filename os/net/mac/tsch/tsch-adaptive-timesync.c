@@ -47,6 +47,7 @@
 #include <stdio.h>
 
 extern const cc1200_rf_cfg_t cc1200_868_2gfsk_50kbps_802154g;
+extern const cc1200_rf_cfg_t cc1200_868_4gfsk_1000kbps;
 
 #if TSCH_ADAPTIVE_TIMESYNC
 
