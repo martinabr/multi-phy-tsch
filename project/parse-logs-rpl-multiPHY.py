@@ -13,6 +13,13 @@ from IPython import embed
 import matplotlib as mpl
 import pickle
 
+# Slotframe len 119
+# 60 for sf0
+# 59 for sf1
+
+SF0_SLOTUSE = 60
+SF1_SLOTUSE = 1
+
 NNODES = 25
 radioToStr = ["1.2 kbps", "8 kbps", "50 kbps", "250 kbps", "1000 kbps", "250 kbps @ 2.4 GHz"]
 
@@ -25,17 +32,19 @@ mpl.rcParams['boxplot.flierprops.markersize'] = 4
 mpl.rcParams['boxplot.flierprops.markeredgecolor'] ='gray'
 
 def parseTxData(log):
-    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 tx').match(log)
+    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 tx LL-.*?->LL-.*?, len +([-\d]*)').match(log)
     if res:
         #asn_ms = int(res.group(1), 16)
         asn_ls = int(res.group(2), 16)
         return {'asn': asn_ls, # ignore MSB
               'radio': int(res.group(3)),
               'channel': int(res.group(8)),
+              'len': int(res.group(9)),
+              'slotsUsed': SF0_SLOTUSE if res.group(3) == '0' else SF1_SLOTUSE,
             }
 
 def parseRxData(log):
-    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 rx LL-(\d*)->LL-NULL, len +[-\d]*, seq +[-\d]*, rssi +([-\d]*), edr +([-\d]*)').match(log)
+    res = re.compile('.*?{asn ([a-f\d]+).([a-f\d]+) link +(\d+) +(\d+) +(\d+) +(\d+) +(\d+) ch +(\d+)\} bc-[01]-0 rx LL-(\d*)->LL-.*?, len +([-\d]*), seq +[-\d]*, rssi +([-\d]*), edr +([-\d]*)').match(log)
     if res:
         #asn_ms = int(res.group(1), 16)
         asn_ls = int(res.group(2), 16)
@@ -43,8 +52,10 @@ def parseRxData(log):
               'radio': int(res.group(3)),
               'channel': int(res.group(8)),
               'source': int(res.group(9)),
-              'rssi': int(res.group(10)),
-              'absedr': abs(int(res.group(11))),
+              'len': int(res.group(10)),
+              'rssi': int(res.group(11)),
+              'absedr': abs(int(res.group(12))),
+              'slotsUsed': SF0_SLOTUSE if res.group(3) == '0' else SF1_SLOTUSE,
             }
 
 def parseLine(line):
@@ -74,7 +85,7 @@ def doParse(dir):
             res["time"] = timedelta(seconds=time);
             res["destination"] = id;
             res["isTx"] = False;
-            res["isNoise"] = False;
+            res["isRx"] = True;
             if res["source"] != 0:
                 data.append(res)
         else:
@@ -84,7 +95,7 @@ def doParse(dir):
                 res["source"] = id;
                 res["destination"] = 0;
                 res["isTx"] = True;
-                res["isNoise"] = False;
+                res["isRx"] = False;
                 data.append(res)
 
     df = DataFrame(data)
@@ -113,8 +124,14 @@ def main():
         df = doParse(dir)
         print("\nSaving to %s file" %(h5file))
         df.to_hdf(h5file,'df')
-    dfNoise = df[df.isNoise == True]
-    dfComm = df[df.isNoise == False]
+
+    # Process the parsed data
+    groupAll = df.groupby([pd.Grouper(freq="1Min"), 'radio'])[['isTx', 'isRx', 'absedr', 'slotsUsed']]
+    tsStats = groupAll.agg({'isTx': {'txCount': 'sum'}, 'isRx': {'rxCount': 'sum'}, 'slotsUsed': {'slotsUsed': 'sum'}, 'absedr': {'absedr': 'mean'}})
+
+    groupAll = df.groupby(['radio','source'])
+    perNodeStats = groupAll.agg({'isTx': {'txCount': 'sum'}, 'isRx': {'rxCount': 'sum'}, 'slotsUsed': {'slotsUsed': 'sum'}, 'absedr': {'absedr': 'mean'}})
+    perNodeStats.columns = perNodeStats.columns.droplevel(0)
 
     embed()
 
