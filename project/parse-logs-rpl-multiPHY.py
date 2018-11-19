@@ -169,23 +169,22 @@ def main():
     df1.absedr = df1.absedr * TICK_TIME
 
     # Time series plots
-    ts.txCount.plot()
-    plt.legend(["Slotframe 0", "Slotframe 1"])
-    plt.xticks(np.arange(0, 7*600*10**9, step=600*10**9),
-               np.arange(0, 70, step=10))
-    plt.xlabel("Time (min)")
-    plt.ylabel("Tx count (#)")
-    plt.grid(True)
-    plt.savefig(os.path.join(dir, "rpl-tsch-txCount.pdf"), bbox_inches='tight')
+    fig, axes = plt.subplots(2, 1, figsize=(8,4), sharex=True)
+    ts.txCount.plot(ax = axes[0])
+    axes[0].legend(["Slotframe 0", "Slotframe 1"])
+    axes[0].set_ylabel("Tx count (#)")
+    axes[0].grid(True)
 
     # Ait time time series
-    ts.channelUtilization.plot()
-    plt.legend(["Slotframe 0", "Slotframe 1"])
+    ts.channelUtilization.plot(ax = axes[1])
+    axes[1].set_xlabel("Time (min)")
+    axes[1].set_ylabel("Channel utilization (%)")
+    axes[1].grid(True)
+    axes[1].get_legend().remove()
     plt.xticks(np.arange(0, 7*600*10**9, step=600*10**9),
                np.arange(0, 70, step=10))
-    plt.xlabel("Time (min)")
-    plt.ylabel("Channel utilization (%)")
-    plt.grid(True)
+    plt.minorticks_off()
+
     plt.savefig(os.path.join(dir, "rpl-tsch-airTime.pdf"), bbox_inches='tight')
 
     # Per node hop count and EDR
