@@ -169,7 +169,7 @@ def main():
     df1.absedr = df1.absedr * TICK_TIME
 
     # Time series plots
-    fig, axes = plt.subplots(2, 1, figsize=(8,4), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5,4), sharex=True)
     ts.txCount.plot(ax = axes[0])
     axes[0].legend(["Slotframe 0", "Slotframe 1"])
     axes[0].set_ylabel("Tx count (#)")
@@ -188,7 +188,7 @@ def main():
     plt.savefig(os.path.join(dir, "rpl-tsch-airTime.pdf"), bbox_inches='tight')
 
     # Per node hop count and EDR
-    fig, axes = plt.subplots(3, 1, figsize=(8,6), sharex=True)
+    fig, axes = plt.subplots(3, 1, figsize=(5,6), sharex=True)
     plt.subplots_adjust(hspace=0.3)
     axes[0].grid(True, zorder=0)
     axes[0].bar(hopsMap.keys(), hopsMap.values(), zorder=3)
@@ -203,6 +203,7 @@ def main():
     axes[2].set_ylabel("Error ($\mu$sec)")
     axes[2].set_title("Sync. error on Slotframe 1")
     axes[2].set_xlabel("Node ID")
+    axes[2].tick_params(axis='x', labelsize=7)
     fig.suptitle("")
     plt.savefig(os.path.join(dir, "rpl-tsch-sync.pdf"), bbox_inches='tight')
 
