@@ -209,7 +209,8 @@ tsch_set_ka_timeout(uint32_t timeout)
 void
 tsch_set_eb_period(uint32_t period)
 {
-  tsch_current_eb_period = MIN(period, TSCH_MAX_EB_PERIOD);
+  //tsch_current_eb_period = MIN(period, TSCH_MAX_EB_PERIOD);
+  tsch_current_eb_period = TSCH_CONF_EB_PERIOD;
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -902,8 +903,9 @@ PROCESS_THREAD(tsch_send_eb_process, ev, data)
     if(tsch_current_eb_period > 0) {
       /* Next EB transmission with a random delay
        * within [tsch_current_eb_period*0.75, tsch_current_eb_period[ */
-      delay = (tsch_current_eb_period / 4)
-        + random_rand() % (tsch_current_eb_period - tsch_current_eb_period / 4);
+       //delay = (tsch_current_eb_period - tsch_current_eb_period / 4)
+         //+ random_rand() % (tsch_current_eb_period / 4);
+       delay = tsch_current_eb_period;
     } else {
       delay = TSCH_EB_PERIOD;
     }
