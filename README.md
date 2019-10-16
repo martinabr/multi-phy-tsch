@@ -1,6 +1,6 @@
 # IEEE 802.15.4 Multi-PHY TSCH with sub-GHz support
 
-This repository contains the source code of TSCH for 868 MHz and the multi-band support for TSCH. To learn more about it , check out our IEEE LCN'19 paper -- *IEEE 802.15.4 TSCH in Sub-GHz: Design Considerations and Multi-band Support*.
+This repository contains the source code of TSCH for 868 MHz and the multi-band support for TSCH. To learn more about it, check out our IEEE LCN'19 paper -- *IEEE 802.15.4 TSCH in Sub-GHz: Design Considerations and Multi-band Support*.
 
 ## Code Layout
 
