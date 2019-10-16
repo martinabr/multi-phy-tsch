@@ -1,25 +1,23 @@
-# Contiki-NG: The OS for Next Generation IoT Devices
+# IEEE 802.15.4 Multi-PHY TSCH with sub-GHz support
 
-[![Build Status](https://travis-ci.org/contiki-ng/contiki-ng.svg?branch=master)](https://travis-ci.org/contiki-ng/contiki-ng/branches)
-[![license](https://img.shields.io/badge/license-3--clause%20bsd-brightgreen.svg)](https://github.com/contiki-ng/contiki-ng/blob/master/LICENSE.md)
-[![Latest release](https://img.shields.io/github/release/contiki-ng/contiki-ng.svg)](https://github.com/contiki-ng/contiki-ng/releases/latest)
-[![GitHub Release Date](https://img.shields.io/github/release-date/contiki-ng/contiki-ng.svg)](https://github.com/contiki-ng/contiki-ng/releases/latest)
-[![Last commit](https://img.shields.io/github/last-commit/contiki-ng/contiki-ng.svg)](https://github.com/contiki-ng/contiki-ng/commit/HEAD)
+This repository contains the source code of TSCH for 868 MHz and the multi-band support for TSCH. To learn more about it , check out our IEEE LCN'19 paper -- *IEEE 802.15.4 TSCH in Sub-GHz: Design Considerations and Multi-band Support*.
 
-Contiki-NG is an open-source, cross-platform operating system for Next-Generation IoT devices. It focuses on dependable (secure and reliable) low-power communication and standard protocols, such as IPv6/6LoWPAN, 6TiSCH, RPL, and CoAP. Contiki-NG comes with extensive documentation, tutorials, a roadmap, release cycle, and well-defined development flow for smooth integration of community contributions.
+## Code Layout
 
-Unless excplicitly stated otherwise, Contiki-NG sources are distributed under
-the terms of the [3-clause BSD license](LICENSE.md).
+*Disclaimer: Although we tested the code extensively, it is a research prototype that likely contains bugs. We take no responsibility for and give no warranties in respect of using the code.*
 
-Contiki-NG started as a fork of the Contiki OS and retains some of its original features.
 
-Find out more:
 
-* GitHub repository: https://github.com/contiki-ng/contiki-ng
-* Documentation: https://github.com/contiki-ng/contiki-ng/wiki
-* Web site: http://contiki-ng.org
+The multi-PHY used to characterize the wireless medium using the single-template design can be found at:
 
-Engage with the community:
+```
+/projects/tsch-multiPHY
+```
 
-* Gitter: https://gitter.im/contiki-ng
-* Twitter: https://twitter.com/contiki_ng
+
+
+The multi-PHY with TSCH beacons at 1.2 kbps and IPv6 traffic at 1000 kbps using the multi-template design can be found at:
+
+```bash
+/project/tsch-rpl-multiPHY
+```
