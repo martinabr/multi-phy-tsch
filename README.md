@@ -21,3 +21,6 @@ The multi-PHY with TSCH beacons at 1.2 kbps and IPv6 traffic at 1000 kbps using 
 ```bash
 /project/tsch-rpl-multiPHY
 ```
+## Notes
+
+This is just the copy of the original code written by my co-author Simon Duquennoy. You can find the original code in his personal [GitHb](https://github.com/simonduq/contiki-ng/tree/wip/multiradio2).
